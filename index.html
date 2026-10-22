@@ -1,0 +1,1488 @@
+<title>AZ Cloud Recall</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Syne:wght@500;700;800&family=Pinyon+Script&family=Caveat:wght@500;700&family=Figtree:wght@400;500;600&family=DM+Mono:wght@400;500&display=swap">
+<style>
+/* Layout concept: a royal study desk. A teal side menu with a crowned rank card, a dotted blueprint paper canvas, bold Syne headlines with Pinyon Script flourishes, Caveat handwriting for notes, doodles drawn over everything, and one aurora hero. Palette: Deep Teal and Damson. */
+:root{
+  --paper:#EBF0EF; --surface:#FBFCFC; --soft:#E0E8E7; --ink:#0B2230; --muted:#4A626D;
+  --line:#C9D6D6; --rule:#BCD8D5; --dots:#C3D3D2; --damson:#8E2457; --accent:#0A7C86; --accent-ink:#FFFFFF;
+  --again:#C0344A; --hard:#A86400; --good:#2B8A3E; --easy:#3454D1; --shadow:rgba(11,34,48,.30);
+  --hero-a:#04222C; --hero-b:#0A4A56; --hero-glow:#B02C6C; --hero-ink:#EAF8F6; --hero-mute:rgba(234,248,246,.76); --hero-big:#6FF0DC; --hero-btn-ink:#04222C;
+  --side-a:#04222C; --side-b:#0A3F4B; --side-ink:#E4F6F3; --side-mute:rgba(228,246,243,.68);
+  --note-ink:#1B2B36; --n-mint:#CBEEE8; --n-rose:#F2D2E1; --n-blue:#D2DBF7; --n-amber:#F6E3B8;
+  --font-display:"Syne",ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif;
+  --font-script:"Pinyon Script","Snell Roundhand","Brush Script MT",cursive;
+  --font-hand:"Caveat","Segoe Print","Bradley Hand",cursive;
+  --font-body:"Figtree",ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif;
+  --font-mono:"DM Mono",ui-monospace,SFMono-Regular,Menlo,monospace;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --paper:#06141C; --surface:#0D2230; --soft:#12303F; --ink:#E3F1EF; --muted:#8DADB1;
+  --line:#1C3B49; --rule:#1E4352; --dots:#15303C; --damson:#E0679F; --accent:#45D9C5; --accent-ink:#04222C;
+  --again:#FF7D8E; --hard:#F2B24C; --good:#6FCB7C; --easy:#92A9FF; --shadow:rgba(0,0,0,.65);
+  --hero-b:#0B5260; --hero-glow:#C23A7C; --side-a:#031A22; --side-b:#08323D;
+  --note-ink:#EAF3F1; --n-mint:#0F3D3E; --n-rose:#44193000; --n-rose:#43192F; --n-blue:#1B2750; --n-amber:#43330F; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --paper:#06141C; --surface:#0D2230; --soft:#12303F; --ink:#E3F1EF; --muted:#8DADB1;
+  --line:#1C3B49; --rule:#1E4352; --dots:#15303C; --damson:#E0679F; --accent:#45D9C5; --accent-ink:#04222C;
+  --again:#FF7D8E; --hard:#F2B24C; --good:#6FCB7C; --easy:#92A9FF; --shadow:rgba(0,0,0,.65);
+  --hero-b:#0B5260; --hero-glow:#C23A7C; --side-a:#031A22; --side-b:#08323D;
+  --note-ink:#EAF3F1; --n-mint:#0F3D3E; --n-rose:#43192F; --n-blue:#1B2750; --n-amber:#43330F; color-scheme:dark}
+
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{background:var(--paper);color:var(--ink);font:400 16px/1.5 var(--font-body);
+  background-image:radial-gradient(var(--dots) 1.1px,transparent 1.2px);background-size:22px 22px}
+h1,h2,h3{font-family:var(--font-display);margin:0;line-height:1.1;text-wrap:balance;letter-spacing:-.01em}
+h2{font-size:1.25rem;font-weight:800}
+h3{font-weight:700}
+p{margin:0}
+button,input,select,textarea{font:inherit;color:inherit}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.mono{font-family:var(--font-mono)}
+.script{font-family:var(--font-script);font-weight:400;letter-spacing:0;font-size:1.25em;line-height:1}
+.hand{font-family:var(--font-hand);font-weight:700}
+.dd{width:1.5em;height:auto;display:inline-block;vertical-align:middle;overflow:visible}
+.dd *{vector-effect:non-scaling-stroke}
+
+/* ---------- shell ---------- */
+.app{display:grid;grid-template-columns:272px minmax(0,1fr);min-height:100vh}
+.side{position:sticky;top:0;align-self:start;height:100vh;height:100dvh;overflow-y:auto;display:flex;flex-direction:column;gap:18px;
+  padding-block:20px;padding-left:max(18px,env(safe-area-inset-left,0px));padding-right:18px;color:var(--side-ink);
+  background:radial-gradient(120% 60% at 0 100%,rgba(176,44,108,.35) 0,transparent 60%),linear-gradient(170deg,var(--side-b),var(--side-a));
+  border-right:1px solid rgba(255,255,255,.08)}
+.brand{display:flex;align-items:center;gap:10px;color:var(--side-ink)}
+.brand .crown{width:44px;color:var(--hero-big);flex:none;filter:drop-shadow(0 0 8px rgba(111,240,220,.45))}
+.brand .az{font-family:var(--font-display);font-weight:800;font-size:1.65rem;letter-spacing:-.02em;line-height:1}
+.brand .cr{display:block;font-family:var(--font-script);font-size:2rem;line-height:.8;color:#fff;text-shadow:0 0 10px rgba(111,240,220,.7),0 0 26px rgba(111,240,220,.35)}
+.nav{display:grid;gap:3px}
+.nv{display:flex;align-items:center;gap:12px;width:100%;text-align:left;padding:.62rem .8rem;border:0;border-radius:12px;background:transparent;color:var(--side-mute);font-weight:600;cursor:pointer;position:relative;transition:background .15s,color .15s,transform .15s}
+.nv:hover{background:rgba(255,255,255,.07);color:var(--side-ink);transform:translateX(3px)}
+.nv svg{width:22px;height:22px;flex:none;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.nv[aria-current="page"]{background:rgba(111,240,220,.14);color:#fff;box-shadow:inset 3px 0 0 var(--hero-big)}
+.nv .badge{margin-left:auto;font-family:var(--font-mono);font-size:.7rem;padding:.05rem .45rem;border-radius:99px;background:var(--hero-big);color:var(--hero-btn-ink);font-weight:500}
+.nv .badge.live{background:var(--damson);color:#fff}
+.rank{margin-top:auto;padding:14px;border-radius:16px;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.12)}
+.rank .rk{font-family:var(--font-hand);font-size:1.6rem;line-height:1;color:#fff}
+.rank .eyebrow{color:var(--side-mute)}
+.crowns{display:flex;gap:2px;color:var(--hero-big);margin:6px 0 8px;min-height:18px}
+.crowns .dd{width:18px}
+.crowns .off{opacity:.25}
+.xpbar{height:7px;border-radius:4px;background:rgba(255,255,255,.14);overflow:hidden}
+.xpbar i{display:block;height:100%;background:linear-gradient(90deg,var(--hero-big),var(--hero-glow));border-radius:4px}
+.fine{font-size:.72rem;color:var(--side-mute);line-height:1.4}
+.mbar{display:none}
+.scrim{display:none}
+.main{min-width:0}
+.content{max-width:1040px;margin:0 auto;padding-block:26px 70px;padding-left:max(18px,env(safe-area-inset-left,0px));padding-right:max(18px,env(safe-area-inset-right,0px))}
+
+@media (max-width:900px){
+  .app{display:block}
+  .side{position:fixed;inset:0 auto 0 0;width:min(86vw,310px);max-height:none;height:100%;z-index:40;transform:translateX(-105%);visibility:hidden;transition:transform .25s ease,visibility 0s .25s;box-shadow:12px 0 40px -10px var(--shadow);padding-top:calc(20px + env(safe-area-inset-top,0px))}
+  .side[data-open="true"]{transform:none;visibility:visible;transition:transform .25s ease}
+  .scrim[data-open="true"]{display:block;position:fixed;inset:0;z-index:30;background:rgba(2,12,18,.55)}
+  .mbar{display:flex;align-items:center;gap:12px;position:sticky;top:env(safe-area-inset-top,0px);z-index:20;padding:10px max(16px,env(safe-area-inset-right,0px)) 10px max(16px,env(safe-area-inset-left,0px));background:var(--surface);border-bottom:1px solid var(--line)}
+  .mbar .mb-title{font-family:var(--font-display);font-weight:800;font-size:1.05rem}
+  .mbar .mb-title span{font-family:var(--font-script);font-weight:400;font-size:1.5em;margin-left:4px}
+  .mbar .sync{margin-left:auto}
+}
+.mbtn{width:42px;height:42px;display:grid;place-items:center;border:1px solid var(--line);border-radius:12px;background:var(--surface);cursor:pointer}
+.mbtn svg{width:22px;height:22px;stroke:currentColor;stroke-width:2;fill:none;stroke-linecap:round}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);background:var(--surface);z-index:50}
+
+/* ---------- type and bits ---------- */
+.eyebrow{font-family:var(--font-mono);font-size:.72rem;text-transform:uppercase;letter-spacing:.12em;color:var(--muted)}
+.sync{font-family:var(--font-mono);font-size:.7rem;color:var(--muted)}
+.ph{display:flex;flex-direction:column;gap:6px;margin-bottom:22px}
+.ph h1{font-size:clamp(1.9rem,5vw,2.9rem);font-weight:800}
+.ph h1 .script{color:var(--accent);font-size:1.35em;margin-left:.1em}
+.ph .sq{width:150px;color:var(--damson);margin-top:2px}
+.ph p{color:var(--muted);max-width:56ch}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:.45rem;min-height:2.6rem;padding:.5rem 1.05rem;border:1px solid var(--line);background:var(--surface);border-radius:12px;font-weight:600;cursor:pointer;text-align:center;transition:transform .12s,box-shadow .12s,border-color .12s}
+.btn:hover{border-color:var(--muted);transform:translateY(-1px)}
+.btn:active{transform:translateY(1px)}
+.btn.primary{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
+.btn.primary:hover{box-shadow:0 8px 20px -8px var(--accent)}
+.btn.ghost{background:transparent;border-color:transparent;color:var(--muted)}
+.btn.danger{color:var(--again)}
+.btn.sm{min-height:2.1rem;padding:.2rem .75rem;font-size:.88rem;border-radius:10px}
+.btn.lg{min-height:3.2rem;font-size:1.05rem}
+.btn.block{width:100%}
+.btn[disabled]{opacity:.5;cursor:not-allowed;transform:none}
+kbd{font-family:var(--font-mono);font-size:.72rem;border:1px solid currentColor;border-radius:4px;padding:0 .3rem;opacity:.75}
+input[type=text],input[type=number],input[type=date],select,textarea{width:100%;padding:.6rem .75rem;border:1px solid var(--line);border-radius:10px;background:var(--surface)}
+textarea{resize:vertical;min-height:4.5rem}
+label.l{display:block;font-family:var(--font-mono);font-size:.72rem;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);margin-bottom:6px}
+.check{display:inline-flex;align-items:center;gap:8px;font-size:.92rem;color:var(--muted);cursor:pointer}
+.check input{width:1.05rem;height:1.05rem;accent-color:var(--accent)}
+.panel{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:1.1rem 1.2rem}
+.panel.hand-box{border-radius:255px 22px 225px 22px/22px 225px 22px 255px;border-width:1.5px}
+.cap{font-size:.86rem;color:var(--muted);margin-top:8px}
+.empty{padding:1.2rem 0;color:var(--muted)}
+.sec{margin-top:34px}
+.sec>h2{margin-bottom:12px;display:flex;align-items:center;gap:10px}
+.sec>h2 .dd{color:var(--damson);width:1.3em}
+.chip{display:inline-block;font-family:var(--font-mono);font-size:.66rem;text-transform:uppercase;letter-spacing:.06em;padding:.12rem .45rem;border:1px solid var(--line);border-radius:6px;color:var(--muted);white-space:nowrap}
+.chip.due{color:var(--accent);border-color:currentColor}
+.chip.leech{color:var(--again);border-color:currentColor}
+.chip.dom{color:var(--damson);border-color:currentColor}
+.row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.row input{flex:1 1 12rem;min-width:0}
+.grid2{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}
+.grid3{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.bar{height:7px;background:var(--line);border-radius:4px;overflow:hidden}
+.bar>i{display:block;height:100%;background:linear-gradient(90deg,var(--accent),var(--damson));border-radius:4px;transition:width .5s}
+.bar.thin{height:5px;margin-top:8px}
+.counts{display:flex;flex-wrap:wrap;gap:4px 14px;font-family:var(--font-mono);font-size:.76rem;color:var(--muted);margin-top:4px}
+.facts{display:flex;flex-wrap:wrap;gap:14px 40px}
+.fact b{display:block;font-family:var(--font-display);font-size:1.9rem;line-height:1.1;font-variant-numeric:tabular-nums}
+.fact span{font-family:var(--font-mono);font-size:.72rem;text-transform:uppercase;letter-spacing:.08em;color:var(--muted)}
+
+/* ---------- hero ---------- */
+.hero2{position:relative;overflow:hidden;border-radius:26px;color:var(--hero-ink);padding:clamp(1.3rem,4vw,2.4rem);
+  background:radial-gradient(60% 90% at 100% 100%,var(--hero-glow) 0,transparent 62%),radial-gradient(55% 80% at 0 0,var(--hero-b) 0,transparent 70%),var(--hero-a);
+  box-shadow:0 30px 60px -40px var(--shadow)}
+.hero2 .clouds{position:absolute;inset:0;width:100%;height:100%;pointer-events:none}
+.cl{fill:rgba(255,255,255,.07);animation:drift 46s ease-in-out infinite alternate}
+.cl.c2{animation-duration:62s;animation-delay:-20s;fill:rgba(255,255,255,.05)}
+.cl.c3{animation-duration:38s;animation-delay:-9s;fill:rgba(111,240,220,.08)}
+@keyframes drift{from{transform:translateX(-40px)}to{transform:translateX(90px)}}
+.hero-in{position:relative;display:grid;grid-template-columns:minmax(0,1fr) auto;gap:24px 36px;align-items:center}
+.greet{font-family:var(--font-script);font-size:clamp(2.2rem,6vw,3.4rem);line-height:1;color:#fff;text-shadow:0 0 14px rgba(111,240,220,.75),0 0 40px rgba(111,240,220,.4)}
+.hl{font-family:var(--font-display);font-weight:800;font-size:clamp(1.6rem,4.6vw,2.6rem);line-height:1.08;margin:.45rem 0 .6rem;text-wrap:balance}
+.hl .num{position:relative;display:inline-block;color:var(--hero-big);padding:0 .2em}
+.hl .num svg{position:absolute;inset:-18% -12%;width:124%;height:136%;color:#fff;opacity:.85;overflow:visible}
+.hero2 .coach{color:var(--hero-mute);max-width:46ch}
+.hero2 .eyebrow{color:var(--hero-mute)}
+.hero-acts{display:flex;flex-wrap:wrap;gap:10px;margin-top:20px}
+.hero2 .btn{background:rgba(255,255,255,.1);border-color:rgba(255,255,255,.28);color:var(--hero-ink)}
+.hero2 .btn.primary{background:var(--hero-big);border-color:var(--hero-big);color:var(--hero-btn-ink)}
+.hero2 .btn[disabled]{background:rgba(255,255,255,.12);color:var(--hero-mute)}
+.hero2 :focus-visible{outline-color:var(--hero-big)}
+.hero-side{display:flex;flex-direction:column;align-items:center;gap:12px;text-align:center}
+.chips{display:flex;flex-wrap:wrap;gap:8px;justify-content:center}
+.hchip{font-family:var(--font-mono);font-size:.74rem;padding:.25rem .7rem;border-radius:99px;background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.22);color:var(--hero-ink)}
+.ring{position:relative;flex:none}
+.ring svg{width:100%;height:100%;display:block}
+.rt{fill:none;stroke:var(--line)}
+.rv{fill:none;stroke:var(--accent);stroke-linecap:round;transition:stroke-dashoffset .8s}
+.hero2 .rt{stroke:rgba(255,255,255,.18)}
+.hero2 .rv{stroke:var(--hero-big)}
+.ring-t{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center}
+.ring-t b{font-family:var(--font-display);font-size:1.6rem;line-height:1;font-variant-numeric:tabular-nums}
+.ring-t span{font-family:var(--font-mono);font-size:.62rem;text-transform:uppercase;letter-spacing:.08em;opacity:.75}
+
+.map{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px}
+.isle{position:relative;padding:1.1rem 1.1rem 1rem;border:1.5px solid var(--line);border-radius:255px 24px 225px 24px/24px 225px 24px 255px;background:var(--surface);display:flex;flex-direction:column;gap:10px;transition:transform .2s,border-color .2s}
+.isle:hover{transform:translateY(-4px) rotate(-.4deg);border-color:var(--accent)}
+.isle .wt{font-family:var(--font-display);font-weight:800;font-size:2.1rem;line-height:1;color:var(--accent)}
+.isle .wt small{font-size:.9rem;color:var(--muted);font-weight:700;margin-left:2px}
+.isle h3{font-size:1.05rem}
+.isle .dd{position:absolute;top:10px;right:14px;width:2rem;color:var(--damson);opacity:.9}
+.isle .row{margin-top:auto}
+
+.tip{position:relative;padding:18px 18px 14px;max-width:34rem;background:var(--n-amber);color:var(--note-ink);transform:rotate(-1.4deg);border-radius:6px 6px 40px 6px;box-shadow:0 14px 24px -16px var(--shadow)}
+.tip::before{content:"";position:absolute;top:-11px;left:50%;width:84px;height:24px;transform:translateX(-50%) rotate(2deg);background:rgba(142,36,87,.35);border-radius:3px}
+.tip .hand{font-size:1.55rem;line-height:1.15}
+.tip .dd{position:absolute;right:12px;bottom:8px;width:2.4rem;color:var(--damson)}
+.duo{display:grid;grid-template-columns:minmax(0,1.2fr) minmax(0,1fr);gap:18px;align-items:start}
+
+/* ---------- charts ---------- */
+svg.chart{display:block;width:100%;height:auto}
+.chart text{fill:var(--muted);font-family:var(--font-mono);font-size:13px}
+.chart .axis,.chart .grid{stroke:var(--line);stroke-width:1;fill:none}
+.chart .b-acc{fill:var(--accent)}
+.chart .b-now{fill:var(--damson)}
+.chart .b-ok{fill:var(--good)}
+.chart .b-miss{fill:var(--again)}
+.chart .curve-a{fill:none;stroke:var(--again);stroke-width:2;stroke-dasharray:6 5}
+.chart .curve-b{fill:none;stroke:var(--accent);stroke-width:2.5}
+.chart .dot{fill:var(--accent)}
+.chart .pass{stroke:var(--damson);stroke-width:1.5;stroke-dasharray:5 5;fill:none}
+.chart .ln{fill:none;stroke:var(--accent);stroke-width:2.5;stroke-linejoin:round}
+.legend{display:flex;flex-wrap:wrap;gap:6px 18px;margin-top:10px;font-size:.86rem;color:var(--muted)}
+.legend i{display:inline-block;width:12px;height:12px;border-radius:3px;margin-right:6px;vertical-align:-1px}
+.heat{display:grid;grid-auto-flow:column;grid-template-rows:repeat(7,1fr);gap:3px;overflow-x:auto;padding-bottom:4px}
+.hc{width:16px;height:16px;border-radius:4px;background:var(--soft)}
+.hc.fut{background:transparent}
+.hc.today{outline:2px solid var(--damson);outline-offset:1px}
+
+/* ---------- study ---------- */
+.dgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:16px}
+.dtile{position:relative;text-align:left;padding:1.1rem;border:1.5px solid var(--line);border-radius:18px;background:var(--surface);cursor:pointer;display:flex;flex-direction:column;gap:6px;transition:transform .18s,border-color .18s,box-shadow .18s}
+.dtile:hover{transform:translateY(-4px) rotate(-.5deg);border-color:var(--accent);box-shadow:0 18px 30px -20px var(--shadow)}
+.dtile[disabled]{opacity:.55;cursor:not-allowed;transform:none}
+.dtile h3{font-size:1.05rem;overflow-wrap:anywhere}
+.dtile .due{font-family:var(--font-display);font-weight:800;font-size:2.3rem;line-height:1;color:var(--accent)}
+.dtile.all{background:linear-gradient(150deg,var(--hero-a),var(--hero-b));color:var(--hero-ink);border-color:transparent}
+.dtile.all .due{color:var(--hero-big)}
+.dtile.all .counts{color:var(--hero-mute)}
+.dtile .dd{position:absolute;right:12px;top:12px;width:1.8rem;color:var(--damson)}
+.dtile.all .dd{color:var(--hero-big)}
+
+.s-top{display:flex;align-items:center;gap:14px;margin-bottom:18px}
+.s-prog{flex:1;display:flex;align-items:center;gap:12px;min-width:0}
+.s-prog .bar{flex:1}
+.flip{perspective:1400px;cursor:pointer}
+.flip-in{display:grid;transition:transform .6s cubic-bezier(.3,.8,.3,1);transform-style:preserve-3d}
+.flip.on .flip-in{transform:rotateY(180deg)}
+.face{grid-area:1/1;backface-visibility:hidden;-webkit-backface-visibility:hidden}
+.face.back{transform:rotateY(180deg)}
+.index{position:relative;background:var(--surface);border:1px solid var(--line);border-radius:14px;box-shadow:0 1px 0 var(--line),0 24px 40px -26px var(--shadow);padding:0 clamp(16px,4vw,32px) 24px;min-height:17rem}
+.index::before{content:"";position:absolute;left:0;right:0;top:2.5rem;height:2px;background:var(--damson)}
+.index .spark{position:absolute;right:14px;bottom:12px;width:1.6rem;color:var(--accent);opacity:.8}
+.index-head{height:2.5rem;display:flex;align-items:center;justify-content:space-between;gap:10px;font-family:var(--font-mono);font-size:.72rem;text-transform:uppercase;letter-spacing:.08em;color:var(--muted)}
+.index-head span{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.ruled{font-size:1.25rem;line-height:2rem;min-height:2rem;white-space:pre-wrap;overflow-wrap:anywhere;padding-top:2px;margin-top:.6rem;background-image:repeating-linear-gradient(to bottom,transparent 0,transparent calc(2rem - 1px),var(--rule) calc(2rem - 1px),var(--rule) 2rem)}
+.ruled.q{font-family:var(--font-display);font-weight:700;font-size:1.4rem}
+.flipcue{position:absolute;left:0;right:0;bottom:12px;text-align:center;font-family:var(--font-hand);font-size:1.3rem;color:var(--muted)}
+.ans-label{font-family:var(--font-hand);font-size:1.5rem;color:var(--accent);line-height:2rem;margin-top:.4rem}
+.typed{margin-top:1rem;font-size:.92rem;color:var(--muted);overflow-wrap:anywhere}
+.typed.ok{color:var(--good)}
+.controls{margin-top:20px;display:grid;gap:10px}
+.grades{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px}
+.g{display:flex;flex-direction:column;align-items:center;gap:2px;padding:.75rem .3rem .65rem;border:1px solid var(--line);border-bottom-width:4px;border-radius:12px;background:var(--surface);cursor:pointer;font-weight:600;transition:transform .12s}
+.g:hover{transform:translateY(-3px)}
+.g small{font-family:var(--font-mono);font-weight:400;color:var(--muted);font-size:.74rem}
+.g.a{border-bottom-color:var(--again)}.g.h{border-bottom-color:var(--hard)}.g.o{border-bottom-color:var(--good)}.g.e{border-bottom-color:var(--easy)}
+.g.suggest{outline:2px solid var(--good);outline-offset:1px}
+.s-foot{display:flex;flex-wrap:wrap;gap:10px 18px;align-items:center;justify-content:space-between;margin-top:14px}
+.hint{font-size:.8rem;color:var(--muted)}
+@media (hover:none){.hint,.btn kbd,.g kbd{display:none}}
+.sumgrid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;margin:20px 0}
+.sumgrid div{border-top:4px solid var(--line);padding-top:8px}
+.sumgrid .a{border-color:var(--again)}.sumgrid .h{border-color:var(--hard)}.sumgrid .o{border-color:var(--good)}.sumgrid .e{border-color:var(--easy)}
+.sumgrid b{display:block;font-family:var(--font-display);font-size:1.8rem;line-height:1.1}
+.sumgrid span{font-size:.8rem;color:var(--muted)}
+
+/* ---------- practice exam ---------- */
+.presets{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px}
+.preset{position:relative;text-align:left;padding:1.2rem;border:1.5px solid var(--line);border-radius:20px;background:var(--surface);cursor:pointer;display:flex;flex-direction:column;gap:4px;transition:transform .18s,border-color .18s,box-shadow .18s}
+.preset:hover{transform:translateY(-5px) rotate(.5deg);border-color:var(--damson);box-shadow:0 22px 34px -22px var(--shadow)}
+.preset .n{font-family:var(--font-display);font-weight:800;font-size:3.2rem;line-height:1;color:var(--accent)}
+.preset .t{font-family:var(--font-script);font-size:2rem;color:var(--damson);line-height:1}
+.preset .dd{position:absolute;right:14px;top:14px;width:2rem;color:var(--damson)}
+.xopts{display:flex;flex-wrap:wrap;gap:14px 24px;align-items:flex-end;margin:18px 0 6px}
+.xopts>div{min-width:12rem}
+.xbar{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:16px}
+.timer{font-family:var(--font-mono);font-size:1.5rem;font-weight:500;padding:.25rem .8rem;border-radius:12px;background:var(--hero-a);color:var(--hero-big);font-variant-numeric:tabular-nums;letter-spacing:.04em}
+.timer.low{background:var(--damson);color:#fff;animation:pulse 1s ease-in-out infinite}
+@keyframes pulse{50%{transform:scale(1.05)}}
+.xgrid{display:grid;grid-template-columns:minmax(0,1fr) 230px;gap:18px;align-items:start}
+.qtext{font-family:var(--font-display);font-weight:700;font-size:1.3rem;line-height:1.3;margin:10px 0 18px;overflow-wrap:anywhere}
+.opts{display:grid;gap:10px}
+.opt{display:flex;gap:12px;align-items:flex-start;text-align:left;width:100%;padding:.8rem .9rem;border:1.5px solid var(--line);border-radius:14px;background:var(--surface);cursor:pointer;transition:transform .12s,border-color .12s,background .12s}
+.opt:hover{transform:translateX(4px);border-color:var(--accent)}
+.opt .L{flex:none;width:1.9rem;height:1.9rem;display:grid;place-items:center;border-radius:50%;border:1.5px solid var(--muted);font-family:var(--font-mono);font-size:.8rem}
+.opt.sel{border-color:var(--accent);background:var(--soft)}
+.opt.sel .L{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
+.opt.right{border-color:var(--good);background:var(--soft)}
+.opt.right .L{background:var(--good);border-color:var(--good);color:#fff}
+.opt.wrong{border-color:var(--again)}
+.opt.wrong .L{background:var(--again);border-color:var(--again);color:#fff}
+.opt.static{cursor:default}.opt.static:hover{transform:none;border-color:var(--line)}
+.opt.static.right:hover{border-color:var(--good)}.opt.static.wrong:hover{border-color:var(--again)}
+.qnav{display:grid;grid-template-columns:repeat(5,1fr);gap:6px}
+.qn{aspect-ratio:1;border:1.5px solid var(--line);border-radius:10px;background:var(--surface);font-family:var(--font-mono);font-size:.82rem;cursor:pointer}
+.qn.done{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
+.qn.flag{box-shadow:0 0 0 2px var(--damson)}
+.qn.cur{outline:2px solid var(--ink);outline-offset:2px}
+.xfoot{display:flex;justify-content:space-between;gap:10px;margin-top:20px;flex-wrap:wrap}
+.confirm{margin-top:16px;padding:12px 14px;border-radius:12px;border:1.5px solid var(--damson);background:var(--soft)}
+.score{display:grid;grid-template-columns:auto minmax(0,1fr);gap:24px;align-items:center}
+.verdict{font-family:var(--font-script);font-size:3rem;line-height:1;color:var(--accent)}
+.verdict.no{color:var(--damson)}
+.dbar{display:grid;grid-template-columns:minmax(0,9rem) minmax(0,1fr) 3.4rem;gap:10px;align-items:center;margin:8px 0;font-size:.9rem}
+.dbar span:last-child{text-align:right;font-family:var(--font-mono)}
+.rev{padding:14px 0;border-bottom:1px solid var(--line)}
+.rev .qtext{font-size:1.05rem;margin:6px 0 10px}
+.exp{margin-top:10px;padding:10px 12px;border-left:3px solid var(--accent);background:var(--soft);border-radius:0 10px 10px 0;font-size:.92rem}
+.hist{display:flex;justify-content:space-between;gap:10px;padding:9px 0;border-bottom:1px solid var(--line);font-size:.92rem}
+
+/* ---------- match game ---------- */
+.mhead{display:flex;flex-wrap:wrap;gap:12px 24px;align-items:center;margin-bottom:16px}
+.mcols{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px 24px}
+.mcol{display:grid;gap:10px;align-content:start}
+.mc{min-height:3.6rem;padding:.7rem .9rem;border:1.5px solid var(--line);border-radius:255px 14px 225px 14px/14px 225px 14px 255px;background:var(--surface);cursor:pointer;text-align:left;font-weight:600;transition:transform .12s,border-color .12s,background .12s;overflow-wrap:anywhere}
+.mc:hover{transform:translateY(-2px);border-color:var(--accent)}
+.mc.sel{border-color:var(--accent);background:var(--soft);transform:scale(1.02)}
+.mc.ok{border-color:var(--good);background:var(--soft);opacity:.55;cursor:default;transform:none}
+.mc.bad{border-color:var(--again);animation:shake .35s}
+.mc.term{font-family:var(--font-display);font-weight:700}
+@keyframes shake{25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}
+
+/* ---------- library ---------- */
+.deck{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:8px 16px;align-items:center;padding:14px 0;border-bottom:1px solid var(--line)}
+.deck h3{font-size:1.08rem;overflow-wrap:anywhere}
+.deck .acts{display:flex;gap:8px}
+.dhead{display:flex;flex-wrap:wrap;gap:12px 16px;align-items:center;justify-content:space-between;margin-bottom:6px}
+.dhead input{font-family:var(--font-display);font-size:1.5rem;font-weight:800;padding:.3rem .5rem;border-color:transparent;background:transparent;flex:1 1 14rem;min-width:0}
+.dhead input:hover,.dhead input:focus{border-color:var(--line);background:var(--surface)}
+.cardform{display:grid;gap:12px}
+.crow{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:8px 14px;padding:12px 0;border-bottom:1px solid var(--line)}
+.cf{font-weight:600;white-space:pre-wrap;overflow-wrap:anywhere}
+.cb{color:var(--muted);white-space:pre-wrap;overflow-wrap:anywhere}
+.cmeta{display:flex;gap:6px;align-items:center;flex-wrap:wrap;justify-content:flex-end}
+.editbox{grid-column:1/-1;display:grid;gap:10px}
+details.tool{margin-top:22px;border:1px solid var(--line);border-radius:14px;background:var(--surface)}
+details.tool>summary{cursor:pointer;padding:.8rem 1.1rem;font-weight:600}
+details.tool>div{padding:0 1.1rem 1.1rem;display:grid;gap:10px}
+.minita{font-family:var(--font-mono);font-size:.8rem}
+
+/* ---------- notes ---------- */
+.notes{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:26px 20px;padding-top:12px}
+.sticky{position:relative;padding:22px 14px 10px;background:var(--nb);color:var(--note-ink);border-radius:4px 4px 34px 4px;transform:rotate(var(--r));box-shadow:0 16px 24px -16px var(--shadow);transition:transform .2s}
+.sticky:hover,.sticky:focus-within{transform:rotate(0) scale(1.02);z-index:2}
+.sticky::before{content:"";position:absolute;top:-10px;left:50%;width:70px;height:22px;transform:translateX(-50%) rotate(-3deg);background:rgba(255,255,255,.45);border-radius:3px;box-shadow:0 1px 0 rgba(0,0,0,.08)}
+.sticky.pin::after{content:"";position:absolute;top:-8px;right:18px;width:16px;height:16px;border-radius:50%;background:var(--damson);box-shadow:inset -3px -3px 0 rgba(0,0,0,.25)}
+.sticky textarea{width:100%;min-height:8.5rem;border:0;background:transparent;padding:0;font-family:var(--font-hand);font-size:1.45rem;line-height:1.2;color:var(--note-ink);resize:vertical}
+.sticky textarea:focus{outline:2px dashed var(--damson);outline-offset:3px}
+.sticky .nacts{display:flex;justify-content:space-between;align-items:center;gap:6px;margin-top:6px}
+.sticky .btn{min-height:1.9rem;padding:.1rem .6rem;font-size:.82rem;background:rgba(255,255,255,.4);border-color:transparent;color:inherit}
+.sw{display:flex;gap:8px}
+.sw label{cursor:pointer}
+.sw input{position:absolute;opacity:0;width:0;height:0}
+.sw span{display:block;width:30px;height:30px;border-radius:50%;border:2px solid var(--line);background:var(--nb)}
+.sw input:checked+span{border-color:var(--ink);transform:scale(1.15)}
+.sw input:focus-visible+span{outline:2px solid var(--accent);outline-offset:2px}
+
+/* ---------- progress ---------- */
+.badges{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:12px}
+.bdg{text-align:center;padding:14px 8px;border:1.5px dashed var(--line);border-radius:18px;color:var(--muted);filter:grayscale(1);opacity:.6}
+.bdg.on{border-style:solid;border-color:var(--damson);color:var(--ink);filter:none;opacity:1;background:var(--surface)}
+.bdg .dd{width:2.2rem;color:var(--damson)}
+.bdg b{display:block;font-family:var(--font-display);font-size:.95rem;margin-top:4px}
+.bdg span{font-size:.76rem;color:var(--muted)}
+.leech{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:6px 12px;padding:10px 0;border-bottom:1px solid var(--line);align-items:center}
+.setrow{display:flex;flex-wrap:wrap;gap:14px 28px;align-items:flex-end}
+.setrow select,.setrow input[type=date]{width:auto}
+
+/* ---------- toast + confetti ---------- */
+#toast{position:fixed;left:50%;bottom:calc(20px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);z-index:90;display:grid;gap:8px;width:max-content;max-width:92vw}
+.toast{padding:.65rem 1rem;border-radius:14px;background:var(--hero-a);color:var(--hero-ink);box-shadow:0 14px 30px -10px var(--shadow);border:1px solid rgba(111,240,220,.35);animation:rise .3s ease-out}
+.toast b{color:var(--hero-big)}
+@keyframes rise{from{opacity:0;transform:translateY(10px)}}
+.conf{position:fixed;inset:0;pointer-events:none;z-index:80;overflow:hidden}
+.conf i{position:absolute;top:-12px;width:9px;height:14px;border-radius:2px;animation:fall 2.1s ease-in forwards}
+@keyframes fall{to{transform:translate(var(--dx),105vh) rotate(var(--rt))}}
+
+@media (max-width:860px){
+  .hero-in{grid-template-columns:1fr}
+  .hero-side{flex-direction:row;justify-content:flex-start;text-align:left;flex-wrap:wrap}
+  .map,.presets,.grid3{grid-template-columns:1fr}
+  .duo,.grid2,.xgrid{grid-template-columns:1fr}
+  .score{grid-template-columns:1fr;justify-items:start}
+}
+@media (max-width:640px){
+  .deck,.crow{grid-template-columns:1fr}
+  .cmeta{justify-content:flex-start}
+  .two{grid-template-columns:1fr}
+  .mcols{gap:10px}
+  .dbar{grid-template-columns:minmax(0,6.5rem) minmax(0,1fr) 3rem}
+}
+@media (max-width:480px){
+  .grades,.sumgrid{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .qnav{grid-template-columns:repeat(6,1fr)}
+}
+@media (prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important}}
+</style>
+
+<div id="app"></div>
+<div id="toast" role="status" aria-live="polite"></div>
+
+<script>
+(function(){
+'use strict';
+var DAY=86400000, LS='fcoach.v1', PACKV=2;
+var DEF={newPerDay:10,typeFirst:false,dailyGoal:20,examDate:'',examTimed:true};
+var app=document.getElementById('app');
+
+/* ---------- helpers ---------- */
+function uid(){return Math.random().toString(36).slice(2,9)+Date.now().toString(36).slice(-3)}
+function esc(s){return String(s).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]})}
+function clone(o){return JSON.parse(JSON.stringify(o))}
+function sod(t){var d=t===undefined?new Date():new Date(t);return new Date(d.getFullYear(),d.getMonth(),d.getDate()).getTime()}
+function addDays(t,n){var d=new Date(t);return new Date(d.getFullYear(),d.getMonth(),d.getDate()+n).getTime()}
+function dkey(t){var d=t===undefined?new Date():new Date(t);return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0')}
+function fmtIvl(d){return d<30?d+'d':d<365?Math.round(d/30)+'mo':(d/365).toFixed(1)+'y'}
+function plural(n,w){return n+' '+w+(n===1?'':'s')}
+function shuffle(a){a=a.slice();for(var i=a.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1)),t=a[i];a[i]=a[j];a[j]=t}return a}
+function mmss(ms){ms=Math.max(0,Math.round(ms/1000));return String(Math.floor(ms/60)).padStart(2,'0')+':'+String(ms%60).padStart(2,'0')}
+function normTxt(s){return String(s).toLowerCase().replace(/[^\p{L}\p{N}\s]/gu,'').replace(/\s+/g,' ').trim()}
+
+/* ---------- doodles ---------- */
+var P='fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"';
+function svg(vb,inner,cls){return '<svg class="dd '+(cls||'')+'" viewBox="'+vb+'" aria-hidden="true" focusable="false">'+inner+'</svg>'}
+var D={
+  crown:function(c){return svg('0 0 40 30','<path '+P+' d="M4 25 L6 9 L14 17 L20 4 L26 17 L34 9 L36 25 Z"/><path '+P+' d="M5 28 C14 30 26 30 35 28"/><circle cx="6" cy="8" r="2" fill="currentColor"/><circle cx="20" cy="3" r="2" fill="currentColor"/><circle cx="34" cy="8" r="2" fill="currentColor"/>',c)},
+  cloud:function(c){return svg('0 0 44 30','<path '+P+' d="M11 26 C3 26 2 16 10 15 C10 6 23 4 26 12 C34 10 40 19 33 26 Z"/>',c)},
+  spark:function(c){return svg('0 0 24 24','<path '+P+' d="M12 2 C12 8 14 10 22 12 C14 14 12 16 12 22 C12 16 10 14 2 12 C10 10 12 8 12 2 Z"/>',c)},
+  star:function(c){return svg('0 0 24 24','<path '+P+' d="M12 3 L14.6 9 L21 9.6 L16.2 13.8 L17.6 20.2 L12 17 L6.4 20.2 L7.8 13.8 L3 9.6 L9.4 9 Z"/>',c)},
+  squig:function(c){return svg('0 0 90 12','<path '+P+' d="M2 7 Q12 0 22 7 T42 7 T62 7 T88 6"/>',c)},
+  arrow:function(c){return svg('0 0 80 50','<path '+P+' d="M4 44 C18 8 50 4 72 22"/><path '+P+' d="M60 18 L73 23 L66 34"/>',c)},
+  circ:function(c){return svg('0 0 100 56','<path '+P+' d="M10 30 C4 10 44 2 72 8 C98 14 94 44 58 50 C28 54 6 46 8 28 C9 20 18 14 28 11"/>',c)},
+  check:function(c){return svg('0 0 24 24','<path '+P+' d="M3 13 L9 19 L21 4"/>',c)},
+  flame:function(c){return svg('0 0 24 28','<path '+P+' d="M12 2 C14 8 20 10 19 18 C18 24 6 26 5 18 C4 13 8 12 9 8 C11 10 11 12 12 12 C13 9 12 6 12 2 Z"/>',c)},
+  bolt:function(c){return svg('0 0 24 28','<path '+P+' d="M14 2 L4 16 H11 L9 26 L20 11 H13 Z"/>',c)},
+  trophy:function(c){return svg('0 0 30 30','<path '+P+' d="M8 4 H22 V12 C22 18 8 18 8 12 Z M8 7 H3 C3 13 6 14 8 14 M22 7 H27 C27 13 24 14 22 14 M15 17 V23 M9 27 H21 M11 23 H19"/>',c)},
+  bulb:function(c){return svg('0 0 24 28','<path '+P+' d="M12 2 C6 2 3 7 5 12 C6 14 8 16 8 19 H16 C16 16 18 14 19 12 C21 7 18 2 12 2 Z M9 23 H15 M10 26 H14"/>',c)},
+  key:function(c){return svg('0 0 30 24','<circle cx="8" cy="12" r="5" '+P+'/><path '+P+' d="M13 12 H27 M22 12 V18 M26 12 V16"/>',c)},
+  map:function(c){return svg('0 0 30 28','<path '+P+' d="M3 6 L10 3 L20 6 L27 3 V22 L20 25 L10 22 L3 25 Z M10 3 V22 M20 6 V25"/>',c)},
+  shield:function(c){return svg('0 0 24 28','<path '+P+' d="M12 2 L21 5 V13 C21 20 16 24 12 26 C8 24 3 20 3 13 V5 Z M8 13 L11 16 L16 10"/>',c)},
+  gear:function(c){return svg('0 0 26 26','<circle cx="13" cy="13" r="4" '+P+'/><path '+P+' d="M13 2 V5 M13 21 V24 M2 13 H5 M21 13 H24 M5 5 L7 7 M19 19 L21 21 M21 5 L19 7 M5 21 L7 19"/>',c)}
+};
+var NAVI={
+  home:'<path d="M3 11 12 3l9 8M5 10v10h5v-6h4v6h5V10"/>',
+  study:'<rect x="3" y="8" width="13" height="12" rx="2"/><path d="M7 8V6a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2h-3"/>',
+  exam:'<circle cx="12" cy="13" r="8"/><path d="M12 9v4l3 2M9 2h6M12 2v3"/>',
+  match:'<circle cx="7" cy="8" r="4"/><circle cx="17" cy="16" r="4"/><path d="M10 11l4 2"/>',
+  library:'<path d="M4 4h4v16H4zM10 4h4v16h-4zM16.5 6l3.8-1 3 14.6-3.8 1z"/>',
+  notes:'<path d="M4 20l1-4L16 5l3 3L8 19zM14 7l3 3"/>',
+  progress:'<path d="M4 20V10M10 20V4M16 20v-8M22 20H2"/>'
+};
+var PAGES=[['home','Home'],['study','Study'],['exam','Practice Exam'],['match','Service Match'],['library','Library'],['notes','Notes'],['progress','Progress']];
+
+/* ---------- content: cards ---------- */
+var PACK=[
+ {key:'cloud',name:'Cloud concepts (25-30%)',match:'Cloud concepts',rows:[
+  ["Shared responsibility model?","The provider and the customer split security duties. The provider always owns the physical datacenter, hosts and network. The customer always owns their data, accounts and devices. Everything in between shifts with the service type."],
+  ["Public vs private vs hybrid cloud?","Public: owned by a provider and shared hardware, reached over the internet. Private: used by one organization, often on-premises. Hybrid: a mix of both, with apps and data moving between them."],
+  ["CapEx vs OpEx?","CapEx is up-front spending on physical infrastructure. OpEx is paying for services as you use them. The cloud's consumption-based model is OpEx."],
+  ["What is the consumption-based model?","You pay only for the resources you use. No up-front cost, no termination fees, and you can stop paying when you stop using."],
+  ["High availability vs scalability?","High availability keeps a service running with minimal downtime, backed by an SLA. Scalability adjusts resources up or down to match demand."],
+  ["Vertical vs horizontal scaling?","Vertical (scale up or down) changes the CPU and RAM of one instance. Horizontal (scale out or in) adds or removes instances."],
+  ["What is elasticity?","The ability to scale out and in automatically as demand rises and falls, so you do not pay for idle capacity."],
+  ["Reliability vs predictability?","Reliability: the system recovers from failure and keeps working. Predictability: performance and cost stay consistent and forecastable."],
+  ["What is IaaS?","Infrastructure as a service: you rent VMs, storage and networks. You manage the OS and everything above it. Example: Azure Virtual Machines."],
+  ["What is PaaS?","Platform as a service: the provider manages the OS and infrastructure. You deploy your code and data. Example: Azure App Service."],
+  ["What is SaaS?","Software as a service: finished software run by the provider. You just use it. Example: Microsoft 365."],
+  ["What is serverless?","You run code without managing servers. The provider allocates resources on demand and you pay per execution. Example: Azure Functions."],
+  ["Which service type gives you the most control, and which the least?","Most control: IaaS. Least control: SaaS. PaaS sits in the middle."],
+  ["Two meanings of manageability in the cloud?","Management of the cloud: auto scaling, monitoring and alerts, deployment templates. Management in the cloud: the portal, CLI, PowerShell and APIs."],
+  ["What is fault tolerance?","A system keeps working when a component fails, usually because of redundant parts."],
+  ["What is disaster recovery?","The plan and ability to restore services after a major outage. Region pairs and backups support it."],
+  ["What is a cloud SLA?","A formal promise of uptime, such as 99.95%. If the provider misses it, you may receive service credits."],
+  ["Name the main cloud pricing models.","Pay-as-you-go (no commitment), reservations (commit for 1 or 3 years for a discount) and spot (cheap spare capacity that can be taken back)."],
+  ["What are Azure Spot VMs?","VMs that use unused Azure capacity at a big discount. Azure can evict them when it needs the capacity, so use them for interruptible work."],
+  ["What is Azure Hybrid Benefit?","A licensing offer that lets you use your existing Windows Server and SQL Server licenses on Azure to lower cost."]
+ ]},
+ {key:'arch',name:'Azure architecture and services (35-40%)',match:'Azure architecture',rows:[
+  ["What is an Azure region?","A geographic area that holds one or more datacenters connected by a low-latency network."],
+  ["What is an availability zone?","A physically separate location inside a region with its own power, cooling and networking. Zone-enabled regions have at least three."],
+  ["What is a region pair?","Two regions in the same geography, typically hundreds of miles apart, used for disaster recovery. Planned updates roll out to one region of the pair at a time."],
+  ["What is an Azure geography?","A market area, usually a country or group of countries, that keeps data residency and compliance boundaries. It contains one or more regions."],
+  ["What is a sovereign region?","An isolated instance of Azure built for legal or compliance needs. Examples: Azure Government (US) and Azure China operated by 21Vianet."],
+  ["Order the management scopes, top to bottom.","Management groups, then subscriptions, then resource groups, then resources."],
+  ["What is a resource group?","A logical container for related resources. A resource belongs to exactly one group. Deleting the group deletes everything in it."],
+  ["What is an Azure subscription?","A unit of billing and access. Resources live in one subscription, and costs roll up to it."],
+  ["What is a management group?","A container for subscriptions. Policy and access you apply to it are inherited by every subscription below."],
+  ["VM vs container vs function?","VM: a full OS you manage. Container: lightweight and shares the host OS kernel. Function: event-triggered code with no server to manage."],
+  ["What resources does a VM need to be sized for?","CPU, memory, storage and networking. Pick a VM size that matches the workload."],
+  ["Availability set vs availability zone?","An availability set spreads VMs across fault and update domains inside one datacenter. Availability zones spread them across separate datacenters in a region, for stronger protection."],
+  ["What are Virtual Machine Scale Sets?","A group of identical, load-balanced VMs that can scale in and out automatically."],
+  ["What is Azure Virtual Desktop?","Windows desktops and apps hosted in Azure and streamed to users on any device."],
+  ["What is Azure App Service?","A PaaS for hosting web apps, REST APIs and mobile backends without managing servers."],
+  ["Azure Container Instances vs AKS?","Container Instances runs containers quickly with no orchestration. Azure Kubernetes Service is managed Kubernetes for orchestrating containers at scale."],
+  ["Name Azure application hosting options.","Virtual Machines, App Service, Container Instances, Azure Kubernetes Service, Azure Functions and Azure Virtual Desktop."],
+  ["What is a virtual network (VNet)?","A private network in Azure. Resources in it talk to each other, to the internet and to on-premises networks."],
+  ["What is a subnet?","A range of IP addresses carved out of a VNet's address space, used to group and secure resources."],
+  ["What is VNet peering?","It connects two VNets over the Microsoft backbone so their resources can communicate privately."],
+  ["VPN Gateway vs ExpressRoute?","VPN Gateway sends an encrypted tunnel over the public internet. ExpressRoute is a private, dedicated connection that does not cross the public internet."],
+  ["What is Azure DNS?","A service that hosts your DNS domains and resolves names using Microsoft's infrastructure."],
+  ["Public endpoint vs private endpoint?","A public endpoint is reached over the internet. A private endpoint gives a service a private IP address in your VNet through Azure Private Link."],
+  ["What does a network security group (NSG) do?","Filters network traffic to and from Azure resources in a VNet using allow and deny rules on source, destination, port and protocol."],
+  ["What is Azure Firewall?","A managed, stateful network firewall service that filters traffic for your virtual networks."],
+  ["What is Azure Bastion?","A managed service for secure RDP and SSH to your VMs from the portal over TLS, with no public IP needed on the VM."],
+  ["What does Azure DDoS Protection do?","Defends public IP resources against distributed denial-of-service attacks."],
+  ["Name the Azure Storage services.","Blob (objects), Files (file shares), Queue (messages), Table (NoSQL key-value) and Disk (VM disks)."],
+  ["What is Blob storage for?","Object storage for large amounts of unstructured data such as images, video, logs and backups."],
+  ["Name the blob access tiers.","Hot (frequent access), Cool (infrequent, 30 days minimum), Cold (rare, 90 days minimum) and Archive (offline, 180 days minimum, hours to rehydrate)."],
+  ["LRS vs ZRS vs GRS vs GZRS?","LRS: 3 copies in one datacenter. ZRS: copies across 3 availability zones. GRS: LRS plus a copy in a paired region. GZRS: ZRS plus a copy in a paired region."],
+  ["What is Azure Files?","Fully managed file shares in the cloud, reachable over SMB or NFS."],
+  ["What are managed disks?","Block storage volumes for Azure VMs, managed by Azure so you do not handle storage accounts."],
+  ["What is Azure Storage Explorer?","A free graphical app for managing storage account contents on Windows, macOS and Linux."],
+  ["What is AzCopy?","A command-line tool that copies blobs and files to and from a storage account."],
+  ["What is Azure File Sync?","It syncs on-premises Windows file servers with Azure Files and caches frequently used files locally."],
+  ["What is Azure Migrate?","A central hub to discover, assess and migrate on-premises servers, databases and apps to Azure."],
+  ["What is Azure Data Box?","A physical device Microsoft ships to you for moving large amounts of data offline."],
+  ["What is Microsoft Entra ID?","The cloud identity and access management service, formerly called Azure Active Directory."],
+  ["What is Microsoft Entra Domain Services?","Managed domain services (domain join, group policy, LDAP, Kerberos) without running your own domain controllers."],
+  ["Authentication vs authorization?","Authentication proves who you are. Authorization decides what you are allowed to do."],
+  ["What is multi-factor authentication?","Sign-in that needs two or more proofs: something you know, something you have, or something you are."],
+  ["Name three passwordless methods.","Windows Hello for Business, the Microsoft Authenticator app and FIDO2 security keys."],
+  ["What is single sign-on (SSO)?","Sign in once with one identity to reach many apps."],
+  ["What are external identities?","A way for people outside your organization, such as partners and customers, to sign in with their own identities."],
+  ["What is Conditional Access?","A policy engine of if-then rules. It reads signals such as user, location, device and risk, then allows, blocks or requires MFA."],
+  ["What is Azure RBAC?","Role-based access control for Azure resources. You assign a role to a user or group at a scope, and it is inherited by everything below."],
+  ["Three principles of Zero Trust?","Verify explicitly, use least-privilege access, and assume breach."],
+  ["What is defense in depth?","Layered security so one failure does not expose everything: physical, identity and access, perimeter, network, compute, application, data."],
+  ["What is Microsoft Defender for Cloud?","A tool for cloud security posture and workload protection. It gives a secure score and recommendations."]
+ ]},
+ {key:'gov',name:'Management and governance (30-35%)',match:'Management and governance',rows:[
+  ["Main factors that affect Azure cost?","Resource type, consumption, maintenance, geography (region), network traffic leaving Azure, subscription type and Marketplace products."],
+  ["What does the pricing calculator do?","Estimates the cost of Azure services before you deploy them."],
+  ["What can Microsoft Cost Management do?","Analyze spending, set budgets and alerts, and give cost-saving recommendations."],
+  ["Do budgets stop spending automatically?","No. A budget sends alerts when spend reaches a threshold. It does not shut resources down by itself."],
+  ["What are tags used for?","Name and value pairs on resources. They organize resources and group costs for reporting. They are not inherited by default."],
+  ["What is Azure Policy?","It creates and enforces rules on resources, such as allowed regions or VM sizes, and reports which resources are non-compliant."],
+  ["What is a policy initiative?","A group of related policy definitions managed and assigned together as one goal."],
+  ["Can Azure Policy fix non-compliant resources?","Yes, for some policies. Remediation tasks bring existing resources into compliance."],
+  ["Azure Policy vs RBAC?","Policy controls what resources may look like. RBAC controls who may do what."],
+  ["What are resource locks?","CanNotDelete and ReadOnly locks stop accidental deletion or change. They apply even to owners and are inherited by child resources."],
+  ["What is Microsoft Purview?","Data governance, risk and compliance across your data estate: discover, classify and protect data."],
+  ["What is the Azure portal?","A web-based graphical interface for creating and managing Azure resources."],
+  ["What is Azure Cloud Shell?","A browser-based, authenticated shell in the portal. Pick Bash or PowerShell. Common tools come pre-installed."],
+  ["What does Cloud Shell use to keep your files?","An Azure Files share in a storage account, so your files persist between sessions."],
+  ["Azure CLI vs Azure PowerShell?","Both manage Azure from the command line. CLI uses az commands and works on any platform. PowerShell uses Verb-Noun cmdlets from the Az module."],
+  ["What is Azure Arc?","It extends Azure management and governance to resources outside Azure: on-premises, other clouds and the edge."],
+  ["What is infrastructure as code?","Defining infrastructure in files so deployments are repeatable and consistent, instead of clicking through a portal."],
+  ["What is Azure Resource Manager (ARM)?","The deployment and management layer for Azure. The portal, CLI, PowerShell and APIs all go through it."],
+  ["What is an ARM template?","A declarative JSON file that describes the resources to deploy. Bicep is a simpler language that compiles to ARM templates."],
+  ["What is Azure Advisor?","Gives personalized recommendations for reliability, security, performance, cost and operational excellence."],
+  ["Azure status vs Service Health vs Resource Health?","Azure status: global outages. Service Health: issues and maintenance affecting your subscriptions. Resource Health: the health of one specific resource."],
+  ["What is Azure Monitor?","Collects, analyzes and acts on telemetry from Azure and on-premises resources."],
+  ["Azure Monitor metrics vs logs?","Metrics are numbers sampled over time, good for near real-time charts. Logs are detailed records you query."],
+  ["What is Log Analytics?","The Azure Monitor tool for querying log data with Kusto Query Language (KQL)."],
+  ["What are Azure Monitor alerts?","Notifications or automated actions that fire when a metric or log condition is met."],
+  ["What is an action group?","A saved set of notification and action choices, such as email, SMS or webhook, that alerts can trigger."],
+  ["What is Application Insights?","Application performance monitoring for web apps: requests, failures, dependencies and user behavior."]
+ ]},
+ {key:'acro',name:'Acronyms and names',match:'Acronyms',rows:[
+  ["ARM","Azure Resource Manager, the deployment and management layer for Azure."],
+  ["AKS","Azure Kubernetes Service, managed Kubernetes."],
+  ["ACI","Azure Container Instances, run containers without orchestration."],
+  ["VNet","Virtual network, your private network in Azure."],
+  ["NSG","Network security group, allow and deny rules for network traffic."],
+  ["SLA","Service level agreement, a formal uptime promise."],
+  ["RBAC","Role-based access control for Azure resources."],
+  ["KQL","Kusto Query Language, used to query Log Analytics."],
+  ["IaC","Infrastructure as code."],
+  ["MFA","Multi-factor authentication."],
+  ["SSO","Single sign-on."],
+  ["FIDO2","An open standard for passwordless sign-in with security keys."],
+  ["SMB and NFS","File sharing protocols used by Azure Files. SMB is common on Windows, NFS on Linux."],
+  ["Bicep","A simpler language for writing infrastructure as code that compiles to ARM templates."]
+ ]},
+ {key:'exam',name:'Exam basics',match:'Exam basics',rows:[
+  ["AZ-900 passing score?","700 or greater (on a scale of 1000)."],
+  ["The three AZ-900 skill areas and their weights?","Cloud concepts 25 to 30%. Azure architecture and services 35 to 40%. Azure management and governance 30 to 35%."],
+  ["Where can you find free official AZ-900 training?","Microsoft Learn has free learning paths for the exam, plus a practice assessment."]
+ ]}
+];
+
+/* ---------- content: practice questions (correct answer first, shuffled at runtime) ---------- */
+var QB=[
+ {d:'c',q:"A company wants to stop buying servers up front and pay only for the resources it uses. Which model does this describe?",o:["Consumption-based","Perpetual licensing","Capital expenditure","Fixed-price hosting"],x:"The consumption-based model charges for what you use, so spending moves from CapEx to OpEx."},
+ {d:'c',q:"Which cloud service type lets you deploy your code while the provider manages the operating system and infrastructure?",o:["PaaS","IaaS","SaaS","On-premises hosting"],x:"Platform as a service, such as Azure App Service, removes OS and infrastructure management."},
+ {d:'c',q:"Microsoft 365 is an example of which service type?",o:["SaaS","IaaS","PaaS","Serverless"],x:"Finished software run by the provider is SaaS."},
+ {d:'c',q:"Under the shared responsibility model, who is always responsible for a customer's data?",o:["The customer","Microsoft","The datacenter operator","The network provider"],x:"Whatever the service type, the customer always owns their data, identities and devices."},
+ {d:'c',q:"An organization keeps some workloads in its own datacenter and others in Azure, connected together. What is this called?",o:["Hybrid cloud","Private cloud","Public cloud","Community cloud"],x:"A mix of on-premises and public cloud is a hybrid cloud."},
+ {d:'c',q:"Which approach runs code in response to events without managing servers, and charges per execution?",o:["Serverless computing","Dedicated hosts","Virtual machines","Availability sets"],x:"Serverless, for example Azure Functions, allocates resources on demand."},
+ {d:'c',q:"You add more CPU and memory to an existing virtual machine. What is this called?",o:["Vertical scaling","Horizontal scaling","Geo-replication","Load balancing"],x:"Changing the size of one instance is vertical scaling (scale up). Adding instances is horizontal scaling."},
+ {d:'c',q:"An app automatically adds instances during a traffic spike and removes them afterwards. Which cloud benefit is this?",o:["Elasticity","Fault tolerance","Governance","Predictability"],x:"Elasticity is scaling out and in automatically with demand."},
+ {d:'c',q:"A provider promises 99.95% uptime in a formal agreement. What is that agreement called?",o:["Service level agreement (SLA)","Total cost of ownership","Resource lock","Service Health"],x:"An SLA states uptime targets and the credits you receive if they are missed."},
+ {d:'c',q:"Which of these is an example of operational expenditure (OpEx)?",o:["Paying a monthly bill for VM usage","Buying physical servers","Building a datacenter","Purchasing network switches"],x:"OpEx is paying as you go. The other options are up-front capital spending."},
+ {d:'c',q:"In an IaaS deployment, which task remains the customer's responsibility?",o:["Patching the guest operating system","Securing the physical datacenter","Maintaining the host hardware","Powering and cooling the racks"],x:"With IaaS you manage the OS and everything above it. The provider handles the physical layers."},
+ {d:'a',q:"Which Azure feature provides physically separate locations with independent power, cooling and networking inside a single region?",o:["Availability zones","Region pairs","Resource groups","Management groups"],x:"Availability zones are separate datacenter locations within one region."},
+ {d:'a',q:"Which is the correct order of Azure management scopes, from highest to lowest?",o:["Management group, subscription, resource group, resource","Subscription, management group, resource group, resource","Resource group, subscription, management group, resource","Management group, resource group, subscription, resource"],x:"Management groups contain subscriptions, which contain resource groups, which contain resources."},
+ {d:'a',q:"What happens to the resources inside a resource group when you delete the group?",o:["They are all deleted","They move to a default group","They stay but become unmanaged","They are archived for 30 days"],x:"Deleting a resource group deletes every resource in it."},
+ {d:'a',q:"Which service gives a private, dedicated connection from on-premises to Azure that does not cross the public internet?",o:["ExpressRoute","VPN Gateway","Azure DNS","VNet peering"],x:"ExpressRoute is a private connection. VPN Gateway uses an encrypted tunnel over the public internet."},
+ {d:'a',q:"Which feature connects two virtual networks so resources can talk privately over the Microsoft backbone?",o:["Virtual network peering","Azure DNS","Resource locks","Availability sets"],x:"VNet peering links VNets privately."},
+ {d:'a',q:"Which service hosts web apps and APIs without you managing servers?",o:["Azure App Service","Azure Data Box","Azure Migrate","Azure Advisor"],x:"App Service is a PaaS for web apps, APIs and mobile backends."},
+ {d:'a',q:"Which option runs a group of identical, load-balanced VMs and can scale them automatically?",o:["Virtual Machine Scale Sets","Availability sets","Azure Virtual Desktop","Azure Files"],x:"Scale Sets manage identical VMs and autoscale them."},
+ {d:'a',q:"Which blob access tier has the lowest storage cost for rarely accessed data and needs rehydration before reading?",o:["Archive","Hot","Cool","Premium"],x:"Archive is offline storage with the lowest storage cost and the longest retrieval time."},
+ {d:'a',q:"Which redundancy option keeps copies of your data in three availability zones in one region?",o:["ZRS","LRS","GRS","RA-GRS"],x:"Zone-redundant storage copies across three availability zones."},
+ {d:'a',q:"A company must move hundreds of terabytes to Azure over a slow network. Which service helps?",o:["Azure Data Box","AzCopy over the internet","Azure Monitor","Azure Policy"],x:"Data Box is a physical device for offline transfer of large data."},
+ {d:'a',q:"Users sign in once and then reach several apps without entering credentials again. What is this called?",o:["Single sign-on","Multi-factor authentication","Role-based access control","Conditional Access"],x:"Single sign-on lets one identity access many apps."},
+ {d:'a',q:"Which Microsoft Entra feature can require MFA or block sign-in based on user, device, location and risk signals?",o:["Conditional Access","Azure Policy","Resource locks","Azure Advisor"],x:"Conditional Access evaluates signals and applies if-then rules."},
+ {d:'a',q:"Which of these is a principle of Zero Trust?",o:["Verify explicitly","Trust devices inside the corporate network","Grant broad access by default","Assume the perimeter is enough"],x:"Zero Trust: verify explicitly, use least privilege, assume breach."},
+ {d:'a',q:"Which Azure feature controls who can create and manage VMs in a subscription?",o:["Azure role-based access control (RBAC)","Azure Policy","Azure Advisor","Resource tags"],x:"RBAC assigns roles that decide who can do what at a scope."},
+ {d:'a',q:"Which tool shows a secure score and security recommendations across your Azure resources?",o:["Microsoft Defender for Cloud","Azure Advisor","Microsoft Purview","Azure Service Health"],x:"Defender for Cloud provides the secure score and workload protection."},
+ {d:'a',q:"Which service runs a container quickly without managing VMs or an orchestrator?",o:["Azure Container Instances","Azure Kubernetes Service","Virtual Machine Scale Sets","Azure Virtual Desktop"],x:"Container Instances runs containers with no orchestration. AKS is for orchestration at scale."},
+ {d:'a',q:"A team needs a managed file share reachable over SMB. Which Azure service fits?",o:["Azure Files","Azure Blob Storage","Azure Queue Storage","Azure Data Box"],x:"Azure Files offers managed file shares over SMB and NFS."},
+ {d:'g',q:"Which tool estimates the cost of Azure services before you deploy them?",o:["Pricing calculator","Azure Advisor","Azure Monitor","Azure Arc"],x:"The pricing calculator gives an estimate up front."},
+ {d:'g',q:"You want to stop anyone, even an owner, from accidentally deleting a production resource. What should you use?",o:["A CanNotDelete resource lock","An Azure Policy","A resource tag","A budget"],x:"Locks block deletion or change even for owners."},
+ {d:'g',q:"Which service can ensure resources are only created in approved regions?",o:["Azure Policy","Azure RBAC","Resource locks","Azure Service Health"],x:"Azure Policy enforces rules such as allowed locations."},
+ {d:'g',q:"Which feature lets you label resources by department so costs can be grouped in reports?",o:["Tags","Resource locks","Availability zones","Management groups"],x:"Tags are name and value pairs used for organizing and cost reporting."},
+ {d:'g',q:"Which service lets you manage servers in other clouds and on-premises from Azure?",o:["Azure Arc","Azure Migrate","Azure Data Box","Azure DNS"],x:"Azure Arc extends Azure management outside Azure."},
+ {d:'g',q:"Which tool gives a browser-based shell with Bash or PowerShell inside the Azure portal?",o:["Azure Cloud Shell","Azure Storage Explorer","Azure Monitor","AzCopy"],x:"Cloud Shell is an authenticated shell in your browser."},
+ {d:'g',q:"Which option deploys the same Azure resources repeatedly from a declarative JSON file?",o:["ARM templates","Azure Advisor","Resource locks","Azure Policy"],x:"ARM templates describe resources declaratively for repeatable deployments."},
+ {d:'g',q:"Which service gives personalized recommendations to improve reliability, security, performance and cost?",o:["Azure Advisor","Azure Service Health","Azure Policy","Azure Arc"],x:"Azure Advisor analyzes your resources and recommends best practices."},
+ {d:'g',q:"Which service tells you about outages and planned maintenance that affect your own resources?",o:["Azure Service Health","Azure Advisor","Microsoft Defender for Cloud","Log Analytics"],x:"Service Health gives a personalized view of issues and maintenance."},
+ {d:'g',q:"Which language do you use to query data in Log Analytics?",o:["Kusto Query Language (KQL)","PowerShell","Bicep","JSON"],x:"Log Analytics queries use KQL."},
+ {d:'g',q:"Which Azure Monitor feature tracks request rates, failures and dependencies in a web app?",o:["Application Insights","Azure Advisor","Azure Policy","Microsoft Purview"],x:"Application Insights is application performance monitoring."},
+ {d:'g',q:"Which service helps you discover, classify and govern data across your data estate?",o:["Microsoft Purview","Azure Advisor","Azure Monitor","Azure DNS"],x:"Purview is for data governance, risk and compliance."},
+ {d:'g',q:"Which service lets you analyze spending and create budgets with alerts?",o:["Microsoft Cost Management","Azure Policy","Azure Arc","Azure Migrate"],x:"Cost Management analyzes spend and manages budgets."}
+];
+var DOM={c:'Cloud concepts',a:'Architecture and services',g:'Management and governance'};
+var DOMW={c:.28,a:.38,g:.34};
+
+/* ---------- content: match game pairs ---------- */
+var MATCH=[
+ ['Azure Functions','Serverless code that runs on events'],['App Service','Managed hosting for web apps and APIs'],
+ ['Container Instances','Run a container with no orchestrator'],['AKS','Managed Kubernetes for orchestration'],
+ ['VM Scale Sets','Identical load-balanced VMs that autoscale'],['Virtual Desktop','Windows desktops streamed from Azure'],
+ ['ExpressRoute','Private dedicated link to Azure'],['VPN Gateway','Encrypted tunnel over the public internet'],
+ ['VNet peering','Private link between two VNets'],['Azure DNS','Hosts DNS domains in Azure'],
+ ['Private endpoint','Private IP for a service in your VNet'],['Blob storage','Object storage for unstructured data'],
+ ['Azure Files','Managed SMB and NFS file shares'],['AzCopy','Command-line copy to and from storage'],
+ ['File Sync','Syncs on-prem file servers with Azure Files'],['Azure Migrate','Hub to assess and move servers to Azure'],
+ ['Data Box','Physical device for offline data transfer'],['Entra ID','Cloud identity and access service'],
+ ['Conditional Access','If-then sign-in rules from risk signals'],['Azure RBAC','Roles that control who can do what'],
+ ['Defender for Cloud','Secure score and threat protection'],['Azure Policy','Enforces rules like allowed regions'],
+ ['Resource lock','Blocks accidental delete or change'],['Purview','Govern and classify your data'],
+ ['Cloud Shell','Browser-based Bash or PowerShell'],['Azure Arc','Manage resources outside Azure'],
+ ['ARM template','Declarative JSON deployment file'],['Azure Advisor','Personalized best-practice tips'],
+ ['Service Health','Outages and maintenance that affect you'],['Log Analytics','Query logs with KQL'],
+ ['Application Insights','Performance monitoring for web apps'],['Cost Management','Budgets and spend analysis'],
+ ['Azure Firewall','Managed stateful network firewall'],['Bastion','Secure RDP and SSH without public IPs']
+];
+
+/* ---------- ranks and badges ---------- */
+var RANKS=[['Page',0],['Squire',150],['Knight',450],['Baron',1000],['Earl',1800],['Duke',3000],['Cloud Sovereign',5000]];
+var BADGES=[
+ {id:'first',n:'First flip',d:'Review a card',i:'spark'},{id:'s3',n:'Hat trick',d:'3-day streak',i:'flame'},
+ {id:'s7',n:'Week of wins',d:'7-day streak',i:'flame'},{id:'c100',n:'Century',d:'100 reviews',i:'star'},
+ {id:'m1',n:'Test pilot',d:'Finish a mock exam',i:'bolt'},{id:'m70',n:'Pass mark',d:'Score 70%+ on a mock',i:'shield'},
+ {id:'m100',n:'Flawless',d:'100% on a mock',i:'trophy'},{id:'g1',n:'Match maker',d:'Finish a match round',i:'key'},
+ {id:'nt',n:'Scribe',d:'Write a note',i:'bulb'},{id:'kn',n:'Knighted',d:'Reach Knight',i:'crown'}
+];
+
+/* ---------- state ---------- */
+function newCard(f,b){return {id:uid(),front:f,back:b,ease:2.5,ivl:0,reps:0,lapses:0,due:0,seen:false}}
+function exampleNotes(){return [
+  {id:uid(),text:'IaaS to PaaS to SaaS: you manage LESS each step. Say it out loud!',color:'mint',pin:true,example:true},
+  {id:uid(),text:'Policy = what resources may look like. RBAC = who may do what.',color:'rose',pin:false,example:true},
+  {id:uid(),text:'Zones = separate buildings in one region. Pairs = two regions far apart.',color:'blue',pin:false,example:true},
+  {id:uid(),text:'LRS < ZRS < GRS < GZRS. More letters, more copies, more places.',color:'amber',pin:false,example:true}
+]}
+function fixState(o){
+  var s={v:1,decks:[],settings:Object.assign({},DEF),days:{},xp:0,badges:[],exams:[],notes:null,matchBest:0,packV:0};
+  if(o&&typeof o==='object'){
+    if(Array.isArray(o.decks))s.decks=o.decks;
+    s.settings=Object.assign({},DEF,o.settings||{});
+    s.days=o.days||{};s.xp=+o.xp||0;s.badges=Array.isArray(o.badges)?o.badges:[];
+    s.exams=Array.isArray(o.exams)?o.exams:[];s.notes=Array.isArray(o.notes)?o.notes:null;
+    s.matchBest=+o.matchBest||0;s.packV=+o.packV||0;
+  }
+  return s;
+}
+var S=null, hadLocal=false;
+try{var raw=localStorage.getItem(LS);if(raw){var o0=JSON.parse(raw);if(o0&&Array.isArray(o0.decks)){S=fixState(o0);hadLocal=true}}}catch(e){}
+if(!S)S=fixState(null);
+
+function migrate(){
+  var changed=false;
+  if(S.packV<PACKV){
+    PACK.forEach(function(p){
+      var d=S.decks.find(function(x){return x.key===p.key})||S.decks.find(function(x){return !x.key&&x.name.indexOf(p.match)===0});
+      if(!d){d={id:uid(),key:p.key,name:p.name,example:true,cards:[]};S.decks.push(d)}
+      d.key=p.key;
+      var have={};d.cards.forEach(function(c){have[normTxt(c.front)]=1});
+      p.rows.forEach(function(r){if(!have[normTxt(r[0])]){d.cards.push(newCard(r[0],r[1]))}});
+      dirtyDecks[d.id]=1;
+    });
+    S.packV=PACKV;changed=true;
+  }
+  if(!S.notes){S.notes=exampleNotes();changed=true}
+  return changed;
+}
+var dirtyDecks={}, delDecks={}, dirtyMeta=false;
+migrate();
+
+/* ---------- saving: account (db) when available, this device otherwise ---------- */
+var col=null, ready=false, syncState='local', flushing=false, again=false, timer=null;
+function syncText(){return {saving:'Saving…',saved:'Saved to your account',local:'Saved on this device',error:'Cloud save failed. Kept on this device.'}[syncState]}
+function setSync(s){syncState=s;var els=document.querySelectorAll('.sync');for(var i=0;i<els.length;i++)els[i].textContent=syncText()}
+function touchDeck(id){dirtyDecks[id]=1;queueSave()}
+function touchMeta(){dirtyMeta=true;queueSave()}
+function queueSave(){setSync('saving');clearTimeout(timer);timer=setTimeout(flush,700)}
+function metaDoc(){return {settings:S.settings,days:S.days,order:S.decks.map(function(d){return d.id}),xp:S.xp,badges:S.badges,exams:S.exams,notes:S.notes,matchBest:S.matchBest,packV:S.packV}}
+function flush(){
+  if(flushing){again=true;return}
+  flushing=true;
+  try{localStorage.setItem(LS,JSON.stringify(S))}catch(e){}
+  var chain=Promise.resolve(true);
+  if(col&&ready){
+    var ds=Object.keys(dirtyDecks),dels=Object.keys(delDecks),meta=dirtyMeta;
+    dirtyDecks={};delDecks={};dirtyMeta=false;
+    chain=(async function(){
+      var ok=true;
+      for(var i=0;i<ds.length;i++){
+        var d=S.decks.find(function(x){return x.id===ds[i]});
+        try{if(d)await col.doc('d_'+ds[i]).set(clone(d))}catch(e){ok=false;dirtyDecks[ds[i]]=1}
+      }
+      for(var j=0;j<dels.length;j++){try{await col.doc('d_'+dels[j]).delete()}catch(e){ok=false;delDecks[dels[j]]=1}}
+      if(meta){try{await col.doc('meta').set(metaDoc())}catch(e){ok=false;dirtyMeta=true}}
+      return ok;
+    })();
+  }
+  chain.then(function(ok){
+    flushing=false;setSync(col&&ready?(ok?'saved':'error'):'local');
+    if(again){again=false;flush()}
+  });
+}
+async function initStore(){
+  try{
+    var cl=window.claude;
+    if(!cl||!cl.use){setSync('local');return}
+    var user=await cl.use('user'), id=user?await user.id():null, db=await cl.use('db');
+    if(!db||!id){setSync('local');return}
+    var c=db.collection('data/users/'+id);
+    var snap=await c.get();
+    col=c;
+    if(snap.size>0){
+      var meta=null,decks=[];
+      snap.docs.forEach(function(d){var v=clone(d.data()||{});if(d.id==='meta')meta=v;else if(d.id.indexOf('d_')===0)decks.push(v)});
+      var order=(meta&&meta.order)||[];
+      decks.sort(function(a,b){var x=order.indexOf(a.id),y=order.indexOf(b.id);return (x<0?999:x)-(y<0?999:y)});
+      S=fixState(Object.assign({},meta||{},{decks:decks}));
+      ready=true;
+      if(migrate()){dirtyMeta=true;flush()}else setSync('saved');
+      if(!view.studying&&!(exam&&!exam.done))render();
+    }else{
+      ready=true;
+      if(hadLocal||S.decks.length){S.decks.forEach(function(d){dirtyDecks[d.id]=1});dirtyMeta=true;flush()}
+      else setSync('saved');
+    }
+  }catch(e){col=null;ready=false;setSync('local')}
+}
+
+/* ---------- scheduling ---------- */
+function schedule(c,g){
+  var ease=c.ease,ivl=c.ivl,reps=c.reps,lapses=c.lapses,due;
+  if(g===0){lapses++;reps=0;ivl=0;ease=Math.max(1.3,ease-0.2);due=Date.now()+10*60000}
+  else{
+    if(g===1){ivl=reps===0?1:Math.max(ivl+1,Math.round(ivl*1.2));ease=Math.max(1.3,ease-0.15)}
+    else if(g===2){ivl=reps===0?2:reps===1?4:Math.max(ivl+1,Math.round(ivl*ease))}
+    else{ivl=reps===0?4:Math.max(ivl+2,Math.round(ivl*ease*1.3));ease=ease+0.15}
+    reps++;due=addDays(sod(),ivl);
+  }
+  return {ease:ease,ivl:ivl,reps:reps,lapses:lapses,due:due};
+}
+function dayRec(){var k=dkey();return S.days[k]||(S.days[k]={n:0,ok:0,newBy:{}})}
+function newLeft(d){var r=S.days[dkey()];return Math.max(0,S.settings.newPerDay-((r&&r.newBy&&r.newBy[d.id])||0))}
+function deckStats(d){
+  var now=Date.now(),nw=0,due=0,mature=0,learned=0;
+  d.cards.forEach(function(c){if(!c.seen)nw++;else{if(c.due<=now)due++;if(c.ivl>=21)mature++;if(c.ivl>=7)learned++}});
+  return {total:d.cards.length,nw:nw,due:due,mature:mature,learned:learned,avail:Math.min(nw,newLeft(d))};
+}
+function scopeDecks(scope){return scope==='all'?S.decks:S.decks.filter(function(d){return d.id===scope})}
+function todayCount(scope){return scopeDecks(scope).reduce(function(a,d){var s=deckStats(d);return a+s.due+s.avail},0)}
+function buildQueue(scope){
+  var now=Date.now(),due=[],fresh=[];
+  scopeDecks(scope).forEach(function(d){
+    var left=newLeft(d);
+    d.cards.forEach(function(c){
+      if(c.seen){if(c.due<=now)due.push(c)}
+      else if(left>0){fresh.push(c);left--}
+    });
+  });
+  due.sort(function(a,b){return a.due-b.due});
+  return due.concat(fresh).map(function(c){return c.id});
+}
+function findCard(id){
+  for(var i=0;i<S.decks.length;i++){var d=S.decks[i];for(var j=0;j<d.cards.length;j++)if(d.cards[j].id===id)return {d:d,c:d.cards[j]}}
+  return null;
+}
+function forecast(n){
+  var out=[],s0=sod(),i;for(i=0;i<n;i++)out.push(0);
+  S.decks.forEach(function(d){d.cards.forEach(function(c){
+    if(!c.seen)return;
+    var k=Math.round((sod(c.due)-s0)/DAY);if(k<0)k=0;if(k<n)out[k]++;
+  })});
+  return out;
+}
+function streak(){
+  var k=sod(),s=0;
+  if(!(S.days[dkey(k)]&&S.days[dkey(k)].n))k=addDays(k,-1);
+  while(S.days[dkey(k)]&&S.days[dkey(k)].n){s++;k=addDays(k,-1)}
+  return s;
+}
+function recent(n){
+  var out=[],t=sod(),i;
+  for(i=n-1;i>=0;i--){var k=addDays(t,-i),r=S.days[dkey(k)]||{n:0,ok:0};out.push({t:k,n:r.n,ok:r.ok})}
+  return out;
+}
+function leeches(){
+  var out=[];
+  S.decks.forEach(function(d){d.cards.forEach(function(c){if(c.lapses>=3)out.push({d:d,c:c})})});
+  return out.sort(function(a,b){return b.c.lapses-a.c.lapses});
+}
+function totalReviews(){var n=0;Object.keys(S.days).forEach(function(k){n+=S.days[k].n||0});return n}
+function dueLabel(c){
+  if(!c.seen)return ['New',''];
+  if(c.due<=Date.now())return ['Due','due'];
+  var d=Math.round((sod(c.due)-sod())/DAY);
+  return [d<=0?'Soon':d===1?'Tomorrow':'In '+fmtIvl(d),''];
+}
+function deckByKey(k){return S.decks.find(function(d){return d.key===k})}
+function mastery(key){var d=deckByKey(key);if(!d||!d.cards.length)return null;var s=deckStats(d);return Math.round(s.learned/s.total*100)}
+function recallWeek(){var n=0,ok=0;recent(7).forEach(function(r){n+=r.n;ok+=r.ok});return n>=10?ok/n:null}
+function daysToExam(){
+  var v=S.settings.examDate;if(!v)return null;
+  var p=v.split('-');if(p.length!==3)return null;
+  var t=new Date(+p[0],+p[1]-1,+p[2]).getTime();if(isNaN(t))return null;
+  return Math.round((t-sod())/DAY);
+}
+function readiness(){
+  if(!S.exams.length)return null;
+  var last=S.exams.slice(-3),avg=last.reduce(function(a,e){return a+e.pct},0)/last.length,rc=recallWeek();
+  return Math.round(rc===null?avg:avg*0.6+rc*100*0.4);
+}
+function coachMsg(){
+  var total=S.decks.reduce(function(a,d){return a+d.cards.length},0);
+  if(!total)return 'Add a few cards to begin. Keep each card to one fact, so a miss tells you exactly what to fix.';
+  var cnt=todayCount('all'),lc=leeches().length,st=streak();
+  var rc=recallWeek(),dte=daysToExam();
+  if(dte!==null&&dte>=0&&dte<=7&&S.exams.length<2)return dte+' days to go. Take a full mock now so you can see which area needs the last push.';
+  if(cnt===0){
+    var f=forecast(8),nx=-1,i;for(i=1;i<8;i++)if(f[i]>0){nx=i;break}
+    return 'You are caught up.'+(nx>0?' Next reviews are due '+(nx===1?'tomorrow':'in '+nx+' days')+'. Try a timed mock or a match round while you wait.':' Add new cards when you are ready.');
+  }
+  if(lc>0)return plural(lc,'card')+' keep slipping. Rewrite them shorter, or add a hook like a doodle or a rhyme.';
+  if(rc!==null&&rc<0.75)return 'Recall was under 75% this week. Turn on typing your answer first and lower new cards per day.';
+  if(!S.exams.length&&totalReviews()>=40)return 'You have studied a good chunk. Try a 10-question sprint to test it under a timer.';
+  if(st>=3)return st+'-day streak. Short daily sessions beat one long cram.';
+  return 'For each Azure service, say its one-line job out loud before you flip. The exam mostly asks you to match a need to the right service.';
+}
+
+/* ---------- xp, badges, toast, confetti ---------- */
+function toast(html){
+  var box=document.getElementById('toast');if(!box)return;
+  var el=document.createElement('div');el.className='toast';el.innerHTML=html;box.appendChild(el);
+  setTimeout(function(){if(el.parentNode)el.parentNode.removeChild(el)},3200);
+}
+function burst(){
+  try{if(window.matchMedia&&window.matchMedia('(prefers-reduced-motion: reduce)').matches)return}catch(e){}
+  var w=document.createElement('div');w.className='conf';w.setAttribute('aria-hidden','true');
+  var cols=['var(--accent)','var(--damson)','var(--hero-big)','var(--easy)','var(--hard)'],h='',i;
+  for(i=0;i<46;i++)h+='<i style="left:'+(Math.random()*100).toFixed(1)+'%;background:'+cols[i%cols.length]+';--dx:'+Math.round(Math.random()*160-80)+'px;--rt:'+Math.round(Math.random()*720-360)+'deg;animation-delay:'+(Math.random()*.5).toFixed(2)+'s"></i>';
+  w.innerHTML=h;document.body.appendChild(w);setTimeout(function(){if(w.parentNode)w.parentNode.removeChild(w)},3000);
+}
+function rankInfo(){
+  var i=0;RANKS.forEach(function(r,k){if(S.xp>=r[1])i=k});
+  var nxt=RANKS[i+1],base=RANKS[i][1];
+  return {i:i,name:RANKS[i][0],xp:S.xp,next:nxt?nxt[1]:null,nextName:nxt?nxt[0]:null,pct:nxt?(S.xp-base)/(nxt[1]-base):1};
+}
+function addXp(n){
+  var before=rankInfo().i;S.xp+=n;var after=rankInfo();
+  if(after.i>before){toast('Rank up! You are now a <b>'+esc(after.name)+'</b>');burst()}
+}
+function award(id){
+  if(S.badges.indexOf(id)>=0)return;
+  S.badges.push(id);
+  var b=BADGES.find(function(x){return x.id===id});
+  if(b)toast('Badge unlocked: <b>'+esc(b.n)+'</b>');
+}
+function checkBadges(){
+  if(totalReviews()>=1)award('first');
+  if(totalReviews()>=100)award('c100');
+  var st=streak();if(st>=3)award('s3');if(st>=7)award('s7');
+  if(rankInfo().i>=2)award('kn');
+}
+
+/* ---------- charts ---------- */
+function barChart(cols,labels,aria,emptyMsg){
+  var W=560,H=170,L=8,R=8,T=22,B=26,n=cols.length,i,tot=cols.map(function(c){return c.reduce(function(a,s){return a+s.v},0)});
+  var mx=Math.max(1,Math.max.apply(null,tot)),bw=(W-L-R)/n,gap=bw*0.3,w=bw-gap;
+  var out='<svg class="chart" viewBox="0 0 '+W+' '+H+'" role="img" aria-label="'+esc(aria)+'">'+(Math.max.apply(null,tot)===0?'<text x="'+W/2+'" y="'+(H/2-14)+'" text-anchor="middle">'+esc(emptyMsg||'Nothing yet')+'</text>':'')+'<line class="axis" x1="'+L+'" y1="'+(H-B)+'" x2="'+(W-R)+'" y2="'+(H-B)+'"/>';
+  for(i=0;i<n;i++){
+    var x=L+i*bw+gap/2,y=H-B;
+    cols[i].forEach(function(s){if(s.v<=0)return;var h=s.v/mx*(H-B-T);y-=h;out+='<rect class="'+s.cls+'" x="'+x.toFixed(1)+'" y="'+y.toFixed(1)+'" width="'+w.toFixed(1)+'" height="'+h.toFixed(1)+'" rx="3"/>'});
+    if(tot[i]>0)out+='<text x="'+(x+w/2).toFixed(1)+'" y="'+(y-6).toFixed(1)+'" text-anchor="middle">'+tot[i]+'</text>';
+    out+='<text x="'+(x+w/2).toFixed(1)+'" y="'+(H-8)+'" text-anchor="middle">'+esc(labels[i])+'</text>';
+  }
+  return out+'</svg>';
+}
+function lineChart(vals,aria){
+  var W=560,H=190,L=40,R=16,T=14,B=28,pw=W-L-R,ph=H-T-B,n=vals.length;
+  function X(i){return L+(n===1?pw/2:i/(n-1)*pw)}
+  function Y(p){return T+(1-p/100)*ph}
+  var out='<svg class="chart" viewBox="0 0 '+W+' '+H+'" role="img" aria-label="'+esc(aria)+'">';
+  [0,50,100].forEach(function(p){out+='<line class="grid" x1="'+L+'" y1="'+Y(p).toFixed(1)+'" x2="'+(W-R)+'" y2="'+Y(p).toFixed(1)+'"/><text x="'+(L-8)+'" y="'+(Y(p)+4).toFixed(1)+'" text-anchor="end">'+p+'%</text>'});
+  out+='<line class="pass" x1="'+L+'" y1="'+Y(70).toFixed(1)+'" x2="'+(W-R)+'" y2="'+Y(70).toFixed(1)+'"/><text x="'+(W-R)+'" y="'+(Y(70)-6).toFixed(1)+'" text-anchor="end" style="fill:var(--damson)">70% pass line</text>';
+  out+='<polyline class="ln" points="'+vals.map(function(v,i){return X(i).toFixed(1)+','+Y(v).toFixed(1)}).join(' ')+'"/>';
+  vals.forEach(function(v,i){out+='<circle class="dot" cx="'+X(i).toFixed(1)+'" cy="'+Y(v).toFixed(1)+'" r="'+(i===n-1?6:4)+'"/>'});
+  return out+'</svg>';
+}
+function curveSvg(){
+  var W=560,H=220,L=44,R=16,T=14,B=32,pw=W-L-R,ph=H-T-B;
+  function X(d){return L+d/30*pw}
+  function Y(p){return T+(1-p)*ph}
+  var rv=[0,1,3,8,19],a=[],b=[],d,i;
+  for(d=0;d<=30;d+=0.25){
+    a.push(X(d).toFixed(1)+','+Y(Math.exp(-d/2)).toFixed(1));
+    var idx=0;rv.forEach(function(r,k){if(r<=d)idx=k});
+    var s=2*Math.pow(2.4,idx);
+    b.push(X(d).toFixed(1)+','+Y(Math.exp(-(d-rv[idx])/s)).toFixed(1));
+  }
+  var out='<svg class="chart" viewBox="0 0 '+W+' '+H+'" role="img" aria-label="Forgetting curve: memory fades quickly without review, and each spaced review slows the fade.">';
+  [0,0.5,1].forEach(function(p){out+='<line class="grid" x1="'+L+'" y1="'+Y(p).toFixed(1)+'" x2="'+(W-R)+'" y2="'+Y(p).toFixed(1)+'"/><text x="'+(L-8)+'" y="'+(Y(p)+4).toFixed(1)+'" text-anchor="end">'+Math.round(p*100)+'%</text>'});
+  for(i=0;i<=30;i+=5)out+='<text x="'+X(i).toFixed(1)+'" y="'+(H-10)+'" text-anchor="middle">'+i+'</text>';
+  out+='<polyline class="curve-a" points="'+a.join(' ')+'"/><polyline class="curve-b" points="'+b.join(' ')+'"/>';
+  rv.forEach(function(r){out+='<circle class="dot" cx="'+X(r).toFixed(1)+'" cy="'+Y(1).toFixed(1)+'" r="4"/>'});
+  return out+'</svg>';
+}
+function ring(pct,size,stroke,big,small){
+  var r=(size-stroke)/2,c=2*Math.PI*r,o=c*(1-Math.min(1,Math.max(0,pct))),m=size/2;
+  return '<div class="ring" style="width:'+size+'px;height:'+size+'px"><svg viewBox="0 0 '+size+' '+size+'" aria-hidden="true"><circle class="rt" cx="'+m+'" cy="'+m+'" r="'+r+'" stroke-width="'+stroke+'"/><circle class="rv" cx="'+m+'" cy="'+m+'" r="'+r+'" stroke-width="'+stroke+'" stroke-dasharray="'+c.toFixed(1)+'" stroke-dashoffset="'+o.toFixed(1)+'" transform="rotate(-90 '+m+' '+m+')"/></svg><div class="ring-t"><b>'+big+'</b><span>'+esc(small)+'</span></div></div>';
+}
+function heatmap(){
+  var today=sod(),dow=new Date(today).getDay(),start=addDays(today,-dow-15*7),cells='',i;
+  for(i=0;i<16*7;i++){
+    var t=addDays(start,i),fut=t>today,r=S.days[dkey(t)],n=r?r.n:0;
+    var p=n===0?0:n<5?30:n<15?55:n<30?80:100;
+    cells+='<div class="hc'+(fut?' fut':'')+(t===today?' today':'')+'" title="'+esc(new Date(t).toLocaleDateString())+': '+n+' reviews" style="'+(p?'background:color-mix(in srgb,var(--accent) '+p+'%,var(--soft))':'')+'"></div>';
+  }
+  return '<div class="heat" role="img" aria-label="Review activity for the last 16 weeks">'+cells+'</div>';
+}
+
+/* ---------- app state for the interface ---------- */
+var view={page:'home',deckId:null,edit:null,confirm:null,q:'',scope:'all',studying:false,limit:150,focus:null,menu:false,exCfg:{n:10,min:10,dom:'all',timed:true},exFilter:'all',exConfirm:false};
+var sess=null, exam=null, match=null;
+
+function go(p){
+  view.page=p;view.menu=false;view.edit=null;view.confirm=null;
+  if(p!=='library')view.deckId=null;
+  window.scrollTo(0,0);render();
+}
+
+/* ---------- shared view pieces ---------- */
+function pageHead(eyebrow,title,script,sub){
+  return '<header class="ph"><span class="eyebrow">'+esc(eyebrow)+'</span><h1>'+esc(title)+(script?' <span class="script">'+esc(script)+'</span>':'')+'</h1>'+D.squig('sq')+(sub?'<p>'+esc(sub)+'</p>':'')+'</header>';
+}
+function sideHtml(){
+  var ri=rankInfo(),crowns='',i,dueN=todayCount('all');
+  for(i=0;i<RANKS.length-1;i++)crowns+=D.crown(i<=ri.i?'':'off');
+  var badges={study:dueN?'<span class="badge">'+dueN+'</span>':'',exam:(exam&&!exam.done)?'<span class="badge live" id="nav-timer">'+(exam.timed?mmss(exam.endAt-Date.now()):'live')+'</span>':''};
+  var nav=PAGES.map(function(p){
+    return '<button class="nv" data-act="go" data-page="'+p[0]+'"'+(view.page===p[0]?' aria-current="page"':'')+'><svg viewBox="0 0 24 24" aria-hidden="true">'+NAVI[p[0]]+'</svg>'+p[1]+(badges[p[0]]||'')+'</button>';
+  }).join('');
+  return '<aside class="side" id="side" data-open="'+view.menu+'" aria-label="Main menu"><div class="brand">'+D.crown('crown')+'<div><span class="az">AZ</span><span class="cr">Cloud Recall</span></div></div>'+
+    '<nav class="nav" aria-label="Pages">'+nav+'</nav>'+
+    '<div class="rank"><div class="eyebrow">Your rank</div><div class="rk">'+esc(ri.name)+'</div><div class="crowns">'+crowns+'</div><div class="xpbar" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="'+Math.round(ri.pct*100)+'"><i style="width:'+Math.round(ri.pct*100)+'%"></i></div><p class="fine" style="margin-top:6px">'+ri.xp+' XP'+(ri.next?' · '+(ri.next-ri.xp)+' to '+esc(ri.nextName):' · top rank')+'</p></div>'+
+    '<p class="fine">Unofficial study aid for exam AZ-900. Not affiliated with or endorsed by Microsoft. Skills follow the July 2026 study guide.</p><span class="sync" id="sync-side" style="color:var(--side-mute)">'+syncText()+'</span></aside>';
+}
+function shell(inner){
+  return '<div class="app">'+sideHtml()+'<div class="scrim" data-open="'+view.menu+'" data-act="menu-close"></div><div class="main"><div class="mbar"><button class="mbtn" data-act="menu-open" aria-label="Open menu" aria-expanded="'+view.menu+'" aria-controls="side"><svg viewBox="0 0 24 24"><path d="M4 7h16M4 12h16M4 17h16"/></svg></button><span class="mb-title">AZ<span>Cloud Recall</span></span><span class="sync">'+syncText()+'</span></div><main class="content" id="content">'+inner+'</main></div></div>';
+}
+
+/* ---------- HOME ---------- */
+function greetWord(){var h=new Date().getHours();return h<5?'Burning the midnight oil':h<12?'Good morning':h<18?'Good afternoon':'Good evening'}
+function homeHtml(){
+  var cnt=todayCount('all'),td=S.days[dkey()]||{n:0},goal=S.settings.dailyGoal,st=streak(),dte=daysToExam(),rd=readiness();
+  var cloudSvg='<svg class="clouds" viewBox="0 0 800 300" preserveAspectRatio="xMidYMid slice" aria-hidden="true"><g class="cl"><path d="M80 120 C40 120 38 80 76 76 C80 36 140 30 154 66 C192 56 218 100 180 120 Z"/></g><g class="cl c2"><path d="M520 70 C470 70 466 24 512 20 C518 -22 592 -26 608 18 C654 8 690 62 640 70 Z"/></g><g class="cl c3"><path d="M360 250 C310 250 308 204 354 200 C360 158 434 154 450 198 C496 188 530 244 480 250 Z"/></g></svg>';
+  var f=forecast(7),labs=f.map(function(_,i){return i===0?'Today':new Date(addDays(sod(),i)).toLocaleDateString(undefined,{weekday:'short'})});
+  var cols=f.map(function(v,i){return [{v:v,cls:i===0?'b-now':'b-acc'}]});
+  var isles=[['c','cloud','Cloud concepts','25–30'],['a','map','Architecture and services','35–40'],['g','shield','Management and governance','30–35']].map(function(x){
+    var m=mastery({c:'cloud',a:'arch',g:'gov'}[x[0]]);
+    return '<article class="isle">'+D[x[1]]()+'<div class="wt">'+x[3]+'<small>%</small></div><h3>'+x[2]+'</h3><div><div class="bar" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="'+(m||0)+'" aria-label="Cards learned"><i style="width:'+(m||0)+'%"></i></div><p class="cap" style="margin-top:6px">'+(m===null?'No cards yet':m+'% of cards learned (7+ day gaps)')+'</p></div><div class="row"><button class="btn sm" data-act="study-key" data-key="'+({c:'cloud',a:'arch',g:'gov'}[x[0]])+'">Study</button><button class="btn sm" data-act="exam-domain" data-dom="'+x[0]+'">Mock this</button></div></article>';
+  }).join('');
+  var chips='<span class="hchip">'+D.flame().replace('class="dd','class="dd" style="width:.9em;margin-right:4px"')+st+'-day streak</span>';
+  if(dte!==null)chips+='<span class="hchip">'+(dte>=0?dte+' days to exam':'Exam date passed')+'</span>';
+  if(rd!==null)chips+='<span class="hchip">Readiness '+rd+'%</span>';
+  return '<section class="hero2">'+cloudSvg+'<div class="hero-in"><div><div class="greet">'+greetWord()+'</div>'+
+    '<h1 class="hl">'+(cnt?'<span class="num">'+cnt+D.circ()+'</span> '+(cnt===1?'card is':'cards are')+' waiting for you.':'All caught up. <span style="color:var(--hero-big)">Royal work.</span>')+'</h1><p class="coach">'+esc(coachMsg())+'</p>'+
+    '<div class="hero-acts"><button class="btn primary lg" data-act="start-all"'+(cnt?'':' disabled')+'>Start flashcards <kbd>S</kbd></button><button class="btn lg" data-act="go" data-page="exam">'+D.bolt().replace('class="dd','class="dd" style="width:1em"')+' Timed mock</button><button class="btn lg" data-act="go" data-page="match">Match game</button></div></div>'+
+    '<div class="hero-side">'+ring(goal?td.n/goal:0,132,11,td.n+'/'+goal,'daily goal')+'<div class="chips">'+chips+'</div></div></div></section>'+
+    '<section class="sec"><h2>'+D.map()+'Exam map</h2><div class="map">'+isles+'</div><p class="cap">Weights show how much of the exam each skill area covers. Learned means the card is scheduled 7 or more days out.</p></section>'+
+    '<div class="duo sec"><section><h2>'+D.bulb()+'Coach\'s note</h2><div class="tip"><p class="hand">'+esc(coachMsg())+'</p>'+D.arrow()+'</div></section>'+
+    '<section><h2>'+D.spark()+'Due this week</h2><div class="panel">'+barChart(cols,labs,'Reviews due each day for the next 7 days','Nothing due yet. It fills after your first session.')+'</div></section></div>';
+}
+
+/* ---------- STUDY ---------- */
+function studyPickHtml(){
+  var all='<button class="dtile all" data-act="start-all"'+(todayCount('all')?'':' disabled')+'>'+D.crown()+'<span class="eyebrow" style="color:var(--hero-mute)">Everything</span><h3>All decks</h3><div class="due">'+todayCount('all')+'</div><div class="counts"><span>cards ready today</span></div></button>';
+  var tiles=S.decks.map(function(d){
+    var s=deckStats(d),n=s.due+s.avail;
+    return '<button class="dtile" data-act="study-deck" data-id="'+d.id+'"'+(n?'':' disabled')+'>'+D.cloud()+'<span class="eyebrow">'+(d.key?'Starter deck':'Your deck')+'</span><h3>'+esc(d.name)+'</h3><div class="due">'+n+'</div><div class="counts"><span>'+s.due+' due</span><span>'+s.avail+' new</span><span>'+s.total+' total</span></div></button>';
+  }).join('');
+  return pageHead('Flashcards','Study','session','Pick a deck. Flip the card, then grade yourself honestly so the schedule fits you.')+'<div class="dgrid">'+all+tiles+'</div>'+(S.decks.length?'':'<p class="empty">No decks yet. Make one in the Library.</p>');
+}
+function studyHtml(){
+  if(sess.finished)return summaryHtml();
+  var f=findCard(sess.queue[0]);
+  if(!f){sess.queue.shift();if(!sess.queue.length){sess.finished=true;return summaryHtml()}f=findCard(sess.queue[0])}
+  var c=f.c,d=f.d,pct=Math.round(sess.done/sess.total*100);
+  var status=!c.seen?'New':(c.lapses>0&&c.reps===0?'Relearning':'Review');
+  var match_=sess.shown&&sess.typed&&normTxt(sess.typed)===normTxt(c.back);
+  var on=sess.shown&&!sess.anim;
+  var head='<div class="index-head"><span>'+esc(d.name)+'</span><span>'+status+'</span></div>';
+  var out='<div class="s-top"><button class="btn sm ghost" data-act="end">← End</button><div class="s-prog"><div class="bar" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="'+pct+'"><i style="width:'+pct+'%"></i></div><span class="mono hint" style="display:inline">'+sess.done+' / '+sess.total+'</span></div></div>';
+  out+='<div class="flip'+(on?' on':'')+'" id="flip" data-act="flip"><div class="flip-in"><article class="face front index" aria-hidden="'+sess.shown+'">'+head+'<div class="ruled q">'+esc(c.front)+'</div><div class="flipcue">tap to flip</div></article>'+
+    '<article class="face back index" aria-hidden="'+!sess.shown+'">'+head+'<div class="ruled q" style="font-size:1.05rem;opacity:.8">'+esc(c.front)+'</div><div class="ans-label">the answer</div><div class="ruled">'+esc(c.back)+'</div>'+(sess.typed?'<div class="typed'+(match_?' ok':'')+'">Your answer: '+esc(sess.typed)+(match_?' (matches)':'')+'</div>':'')+D.spark('spark')+'</article></div></div>';
+  out+='<div class="controls">';
+  if(!sess.shown){
+    if(sess.typeFirst)out+='<input type="text" id="ans" autocomplete="off" autocapitalize="off" placeholder="Type your answer, then press Enter" aria-label="Your answer">';
+    out+='<button class="btn primary lg block" data-act="show">Flip card <kbd>Space</kbd></button>';
+  }else{
+    var gs=[['Again','a'],['Hard','h'],['Good','o'],['Easy','e']];
+    out+='<div class="grades">'+gs.map(function(g,i){
+      var p=schedule(c,i);
+      return '<button class="g '+g[1]+(match_&&i===2?' suggest':'')+'" data-act="grade" data-g="'+i+'">'+g[0]+'<small>'+(i===0?'10 min':fmtIvl(p.ivl))+'</small><kbd>'+(i+1)+'</kbd></button>';
+    }).join('')+'</div>';
+  }
+  out+='</div><div class="s-foot"><label class="check"><input type="checkbox" id="tf"'+(sess.typeFirst?' checked':'')+'> Type my answer first</label>'+(sess.last?'<button class="btn sm ghost" data-act="undo">Undo last grade <kbd>Z</kbd></button>':'')+'</div><p class="hint" style="margin-top:12px">Space flips the card. Keys 1 to 4 grade it.</p>';
+  return out;
+}
+function summaryHtml(){
+  var r=sess.res,total=r[0]+r[1]+r[2]+r[3],rec=r[1]+r[2]+r[3],acc=total?Math.round(rec/total*100):0;
+  var secs=Math.round((Date.now()-sess.t0)/1000),tm=Math.floor(secs/60)+':'+String(secs%60).padStart(2,'0');
+  var more=buildQueue(sess.scope).length,tmr=forecast(2)[1];
+  return '<div class="panel hand-box" style="margin-top:6px"><div class="eyebrow">Session complete</div><h1 style="font-size:2.3rem;margin:.3rem 0 .4rem;font-weight:800">'+plural(sess.total,'card')+' <span class="script" style="color:var(--accent)">done</span></h1><p>'+acc+'% recalled in '+tm+'. You earned '+sess.xp+' XP.'+(tmr?' '+plural(tmr,'review')+' will be due tomorrow.':'')+'</p>'+
+    '<div class="sumgrid"><div class="a"><b>'+r[0]+'</b><span>Again</span></div><div class="h"><b>'+r[1]+'</b><span>Hard</span></div><div class="o"><b>'+r[2]+'</b><span>Good</span></div><div class="e"><b>'+r[3]+'</b><span>Easy</span></div></div>'+
+    '<div class="row"><button class="btn primary" data-act="finish">Back to home</button>'+(more?'<button class="btn" data-act="more-session">Keep going ('+more+' more)</button>':'')+'<button class="btn" data-act="go" data-page="exam">Try a mock exam</button></div></div>';
+}
+function startSession(scope){
+  var q=buildQueue(scope);
+  if(!q.length){toast('Nothing is due right now.');return}
+  sess={scope:scope,queue:q,total:q.length,done:0,shown:false,anim:false,typed:'',res:[0,0,0,0],t0:Date.now(),last:null,typeFirst:!!S.settings.typeFirst,finished:false,xp:0};
+  view.studying=true;view.page='study';view.menu=false;window.scrollTo(0,0);render();
+}
+function reveal(){
+  if(!sess||sess.shown||sess.finished)return;
+  var a=document.getElementById('ans');sess.typed=a?a.value.trim():'';sess.shown=true;sess.anim=true;render();
+}
+var XPG=[2,6,10,12];
+function grade(g){
+  if(!sess||!sess.shown||sess.finished)return;
+  var f=findCard(sess.queue[0]);if(!f)return;
+  var c=f.c,d=f.d,day=dayRec(),k=dkey();
+  sess.last={id:c.id,deck:d.id,card:clone(c),queue:sess.queue.slice(),done:sess.done,res:sess.res.slice(),day:clone(day),dkey:k,xp:S.xp,sxp:sess.xp};
+  var wasNew=!c.seen;
+  Object.assign(c,schedule(c,g));c.seen=true;
+  day.n++;if(g>=1)day.ok++;
+  if(wasNew)day.newBy[d.id]=(day.newBy[d.id]||0)+1;
+  sess.res[g]++;sess.queue.shift();
+  if(g===0)sess.queue.splice(Math.min(3,sess.queue.length),0,c.id);else sess.done++;
+  sess.shown=false;sess.anim=false;sess.typed='';
+  addXp(XPG[g]);sess.xp+=XPG[g];
+  if(!sess.queue.length){sess.finished=true;burst();addXp(10);sess.xp+=10}
+  checkBadges();pruneDays();touchDeck(d.id);touchMeta();render();
+}
+function undo(){
+  var L=sess&&sess.last;if(!L)return;
+  var f=findCard(L.id);if(!f)return;
+  Object.keys(L.card).forEach(function(key){f.c[key]=L.card[key]});
+  S.days[L.dkey]=L.day;S.xp=L.xp;sess.xp=L.sxp;
+  sess.queue=L.queue;sess.done=L.done;sess.res=L.res;sess.finished=false;sess.last=null;sess.shown=false;sess.anim=false;sess.typed='';
+  touchDeck(L.deck);touchMeta();render();
+}
+function pruneDays(){
+  var keys=Object.keys(S.days);if(keys.length<=400)return;
+  keys.sort();keys.slice(0,keys.length-400).forEach(function(k){delete S.days[k]});
+}
+
+/* ---------- PRACTICE EXAM ---------- */
+function pickQuestions(n,dom){
+  var idx=QB.map(function(_,i){return i}),pool;
+  if(dom!=='all'){pool=shuffle(idx.filter(function(i){return QB[i].d===dom}));return pool.slice(0,Math.min(n,pool.length))}
+  var by={c:shuffle(idx.filter(function(i){return QB[i].d==='c'})),a:shuffle(idx.filter(function(i){return QB[i].d==='a'})),g:shuffle(idx.filter(function(i){return QB[i].d==='g'}))};
+  var want={c:Math.round(n*DOMW.c),a:Math.round(n*DOMW.a)};want.g=n-want.c-want.a;
+  var out=[];['c','a','g'].forEach(function(k){out=out.concat(by[k].splice(0,Math.min(want[k],by[k].length)))});
+  if(out.length<n){var rest=shuffle(by.c.concat(by.a,by.g));out=out.concat(rest.slice(0,n-out.length))}
+  return shuffle(out);
+}
+function startExam(cfg){
+  var ids=pickQuestions(cfg.n,cfg.dom);
+  if(!ids.length){toast('No questions for that choice.');return}
+  var qs=ids.map(function(i){
+    var q=QB[i],opts=shuffle(q.o.map(function(t,k){return {t:t,ok:k===0}}));
+    return {i:i,opts:opts,pick:null,flag:false};
+  });
+  var ms=cfg.min*60000;
+  exam={q:qs,cur:0,timed:cfg.timed,durMs:ms,t0:Date.now(),endAt:Date.now()+ms,done:false,res:null};
+  S.settings.examTimed=cfg.timed;touchMeta();
+  view.exConfirm=false;view.exFilter='all';view.page='exam';view.menu=false;window.scrollTo(0,0);render();
+}
+function finishExam(auto){
+  if(!exam||exam.done)return;
+  var secs=Math.round((Math.min(Date.now(),exam.timed?exam.endAt:Date.now())-exam.t0)/1000),correct=0,dom={c:[0,0],a:[0,0],g:[0,0]};
+  exam.q.forEach(function(x){
+    var q=QB[x.i],ok=x.pick!==null&&x.opts[x.pick].ok;
+    dom[q.d][1]++;if(ok){correct++;dom[q.d][0]++}
+  });
+  var n=exam.q.length,pct=Math.round(correct/n*100);
+  exam.done=true;exam.res={correct:correct,n:n,pct:pct,secs:secs,dom:dom,auto:!!auto};
+  S.exams.push({t:Date.now(),n:n,correct:correct,pct:pct,secs:secs,dom:dom,timed:exam.timed});
+  if(S.exams.length>30)S.exams=S.exams.slice(-30);
+  addXp(10+Math.round(pct/5));
+  award('m1');if(pct>=70)award('m70');if(pct===100)award('m100');
+  if(pct>=70)burst();
+  checkBadges();view.exConfirm=false;view.exFilter='all';touchMeta();render();
+}
+function examSetupHtml(){
+  var c=view.exCfg,hist=S.exams.slice(-5).reverse();
+  var presets=[[10,10,'Sprint','a quick warm-up'],[20,20,'Standard','a solid check'],[41,45,'Full mock','the whole bank']];
+  var ph=presets.map(function(p){return '<button class="preset" data-act="exam-start" data-n="'+p[0]+'" data-min="'+p[1]+'">'+D.bolt()+'<span class="n">'+p[0]+'</span><span>questions</span><span class="t">'+p[2]+'</span><span class="cap" style="margin:0">'+p[1]+' minutes · '+p[3]+'</span></button>'}).join('');
+  var hh=hist.length?hist.map(function(e){return '<div class="hist"><span>'+esc(new Date(e.t).toLocaleDateString(undefined,{month:'short',day:'numeric'}))+' · '+e.n+' questions'+(e.timed?'':' · untimed')+'</span><b class="mono" style="color:'+(e.pct>=70?'var(--good)':'var(--damson)')+'">'+e.pct+'%</b></div>'}).join(''):'<p class="empty">No attempts yet. Your scores will appear here.</p>';
+  var avail=function(d){return QB.filter(function(q){return q.d===d}).length};
+  return pageHead('Practice Exam','Mock','exam','Timed multiple-choice practice that mirrors the three skill areas. Answers and explanations come at the end.')+
+    '<div class="presets">'+ph+'</div>'+
+    '<div class="xopts"><div><label class="l" for="ex-dom">Focus</label><select id="ex-dom"><option value="all"'+(c.dom==='all'?' selected':'')+'>All areas, weighted like the exam</option><option value="c"'+(c.dom==='c'?' selected':'')+'>'+DOM.c+' ('+avail('c')+')</option><option value="a"'+(c.dom==='a'?' selected':'')+'>'+DOM.a+' ('+avail('a')+')</option><option value="g"'+(c.dom==='g'?' selected':'')+'>'+DOM.g+' ('+avail('g')+')</option></select></div>'+
+    '<label class="check"><input type="checkbox" id="ex-timed"'+(c.timed?' checked':'')+'> Run the countdown timer</label></div>'+
+    '<p class="cap">Pick a size above to begin. If a focus area has fewer questions than the size, you get all of them. These are practice questions written for this app, not real exam items. The real exam length and format can change, so check Microsoft Learn.</p>'+
+    '<section class="sec"><h2>'+D.trophy()+'Recent attempts</h2><div class="panel">'+hh+'</div></section>';
+}
+function examRunHtml(){
+  var n=exam.q.length,x=exam.q[exam.cur],q=QB[x.i],answered=exam.q.filter(function(z){return z.pick!==null}).length,L='ABCD';
+  var nav=exam.q.map(function(z,i){return '<button class="qn'+(z.pick!==null?' done':'')+(z.flag?' flag':'')+(i===exam.cur?' cur':'')+'" data-act="goto" data-i="'+i+'" aria-label="Question '+(i+1)+(z.pick!==null?', answered':'')+(z.flag?', flagged':'')+'">'+(i+1)+'</button>'}).join('');
+  var opts=x.opts.map(function(o,k){return '<button class="opt'+(x.pick===k?' sel':'')+'" data-act="pick" data-i="'+k+'" aria-pressed="'+(x.pick===k)+'"><span class="L">'+L[k]+'</span><span>'+esc(o.t)+'</span></button>'}).join('');
+  var left=n-answered;
+  return '<div class="xbar"><span class="eyebrow">Question '+(exam.cur+1)+' of '+n+'</span><span class="timer" id="timer" style="margin-left:auto">'+(exam.timed?mmss(exam.endAt-Date.now()):mmss(Date.now()-exam.t0))+'</span><span class="eyebrow">'+(exam.timed?'time left':'elapsed')+'</span></div>'+
+    '<div class="xgrid"><section class="panel"><div class="row" style="justify-content:space-between"><span class="chip dom">'+esc(DOM[q.d])+'</span><button class="btn sm'+(x.flag?' primary':'')+'" data-act="flag" aria-pressed="'+x.flag+'">'+(x.flag?'Flagged':'Flag for review')+' <kbd>F</kbd></button></div><div class="qtext">'+esc(q.q)+'</div><div class="opts" role="group" aria-label="Answer choices">'+opts+'</div>'+
+    '<div class="xfoot"><button class="btn" data-act="prev"'+(exam.cur===0?' disabled':'')+'>← Previous</button>'+(exam.cur<n-1?'<button class="btn primary" data-act="next">Next →</button>':'<button class="btn primary" data-act="finish-ask">Finish exam</button>')+'</div>'+
+    (view.exConfirm?'<div class="confirm" role="alert"><p>'+(left?'You have '+plural(left,'unanswered question')+'. ':'')+'Submit your exam now?</p><div class="row" style="margin-top:10px"><button class="btn primary sm" data-act="finish-yes">Yes, submit</button><button class="btn sm" data-act="finish-no">Keep going</button></div></div>':'')+
+    '</section><aside class="panel"><div class="eyebrow">Navigator</div><div class="qnav" style="margin-top:10px">'+nav+'</div><p class="cap">'+answered+' of '+n+' answered. Outlined numbers are flagged.</p><button class="btn block sm" style="margin-top:10px" data-act="finish-ask">Submit exam</button></aside></div>'+
+    '<p class="hint" style="margin-top:12px">Keys: 1 to 4 or A to D pick an answer, arrows move, F flags.</p>';
+}
+function examResultHtml(){
+  var r=exam.res,pass=r.pct>=70,L='ABCD';
+  var doms=['c','a','g'].map(function(k){var v=r.dom[k],p=v[1]?Math.round(v[0]/v[1]*100):0;return v[1]?'<div class="dbar"><span>'+esc(DOM[k])+'</span><div class="bar"><i style="width:'+p+'%"></i></div><span>'+v[0]+'/'+v[1]+'</span></div>':''}).join('');
+  var items=exam.q.map(function(x,i){
+    var q=QB[x.i],ok=x.pick!==null&&x.opts[x.pick].ok;
+    if(view.exFilter==='wrong'&&ok)return '';
+    var opts=x.opts.map(function(o,k){var cls=o.ok?' right':(x.pick===k?' wrong':'');return '<div class="opt static'+cls+'"><span class="L">'+L[k]+'</span><span>'+esc(o.t)+(x.pick===k?' (your answer)':'')+(o.ok?' (correct)':'')+'</span></div>'}).join('');
+    return '<div class="rev"><div class="row" style="justify-content:space-between"><span class="chip dom">'+(i+1)+' · '+esc(DOM[q.d])+'</span>'+(ok?'<span class="chip due">Correct</span>':'<span class="chip leech">'+(x.pick===null?'Skipped':'Missed')+'</span>')+'</div><div class="qtext">'+esc(q.q)+'</div><div class="opts">'+opts+'</div><div class="exp">'+esc(q.x)+'</div>'+(ok?'':'<div class="row" style="margin-top:10px"><button class="btn sm" data-act="exam-add" data-i="'+i+'">Add to my flashcards</button></div>')+'</div>';
+  }).join('');
+  var missed=r.n-r.correct;
+  return '<div class="panel hand-box"><div class="score">'+ring(r.pct/100,150,13,r.pct+'%',r.correct+' of '+r.n)+'<div><div class="verdict'+(pass?'':' no')+'">'+(pass?'You passed the practice line':'Not there yet')+'</div><p style="margin-top:8px">'+(pass?'Nice. Keep the streak going and aim higher on weaker areas.':'The practice pass line is 70%, matching the 700 out of 1000 pass mark. Review what you missed and try again.')+'</p><p class="cap">Time used '+mmss(r.secs*1000)+(r.auto?' (time ran out)':'')+'. Practice scores are a guide. Real exam scoring is scaled.</p></div></div></div>'+
+    '<section class="sec"><h2>'+D.map()+'By skill area</h2><div class="panel">'+doms+'</div></section>'+
+    '<div class="row" style="margin-top:22px"><button class="btn primary" data-act="exam-again">New mock</button>'+(missed?'<button class="btn" data-act="exam-add-all">Add all '+missed+' missed to flashcards</button>':'')+'<button class="btn" data-act="exam-close">Back to start</button></div>'+
+    '<section class="sec"><h2>'+D.check()+'Review answers</h2><div class="row" style="margin-bottom:6px"><button class="btn sm'+(view.exFilter==='all'?' primary':'')+'" data-act="exfilter" data-f="all">All</button><button class="btn sm'+(view.exFilter==='wrong'?' primary':'')+'" data-act="exfilter" data-f="wrong">Missed only</button></div><div>'+(items||'<p class="empty">Nothing missed. Flawless.</p>')+'</div></section>';
+}
+function examHtml(){
+  if(!exam)return examSetupHtml();
+  if(exam.done)return pageHead('Practice Exam','Results','scored')+examResultHtml();
+  return examRunHtml();
+}
+function missedDeck(){
+  var d=deckByKey('missed');
+  if(!d){d={id:uid(),key:'missed',name:'Missed questions',cards:[]};S.decks.push(d);touchMeta()}
+  return d;
+}
+function addMissed(i){
+  var x=exam.q[i],q=QB[x.i],d=missedDeck(),ok=x.opts.find(function(o){return o.ok});
+  if(d.cards.some(function(c){return normTxt(c.front)===normTxt(q.q)}))return false;
+  d.cards.push(newCard(q.q,ok.t+'. '+q.x));touchDeck(d.id);return true;
+}
+function tickExam(){
+  if(!exam||exam.done)return;
+  var left=exam.endAt-Date.now();
+  if(exam.timed&&left<=0){finishExam(true);return}
+  var txt=exam.timed?mmss(left):mmss(Date.now()-exam.t0);
+  var t=document.getElementById('timer');
+  if(t){t.textContent=txt;t.classList.toggle('low',exam.timed&&left<Math.max(60000,exam.durMs*.1))}
+  var nt=document.getElementById('nav-timer');if(nt)nt.textContent=exam.timed?txt:'live';
+}
+
+/* ---------- SERVICE MATCH ---------- */
+function newMatch(){
+  var pairs=shuffle(MATCH).slice(0,6);
+  match={pairs:pairs,L:shuffle([0,1,2,3,4,5]),R:shuffle([0,1,2,3,4,5]),done:{},selL:null,selR:null,bad:null,miss:0,t0:Date.now(),end:null,best:false};
+}
+function matchHtml(){
+  if(!match)newMatch();
+  var left=match.L.map(function(i){var cls=match.done[i]?' ok':(match.selL===i?' sel':'')+(match.bad&&match.bad.l===i?' bad':'');return '<button class="mc term'+cls+'" data-act="mpick" data-side="L" data-i="'+i+'"'+(match.done[i]?' disabled':'')+'>'+esc(match.pairs[i][0])+'</button>'}).join('');
+  var right=match.R.map(function(i){var cls=match.done[i]?' ok':(match.selR===i?' sel':'')+(match.bad&&match.bad.r===i?' bad':'');return '<button class="mc'+cls+'" data-act="mpick" data-side="R" data-i="'+i+'"'+(match.done[i]?' disabled':'')+'>'+esc(match.pairs[i][1])+'</button>'}).join('');
+  var n=Object.keys(match.done).length,fin=match.end!==null;
+  var t=fin?match.end:(Date.now()-match.t0)+match.miss*3000;
+  return pageHead('Service Match','Pair','up','Link each Azure service to the job it does. Wrong guesses add 3 seconds.')+
+    '<div class="mhead"><span class="timer" id="timer">'+mmss(t)+'</span><span class="eyebrow">'+n+' of 6 matched · '+plural(match.miss,'miss')+(S.matchBest?' · best '+mmss(S.matchBest):'')+'</span><button class="btn sm" style="margin-left:auto" data-act="mnew">New round</button></div>'+
+    (fin?'<div class="panel hand-box" style="margin-bottom:16px"><div class="verdict">Round complete</div><p style="margin-top:6px">Final time '+mmss(match.end)+(match.best?'. New personal best!':'.')+' +20 XP.</p><div class="row" style="margin-top:12px"><button class="btn primary" data-act="mnew">Play again</button></div></div>':'')+
+    '<div class="mcols"><div class="mcol" role="group" aria-label="Services">'+left+'</div><div class="mcol" role="group" aria-label="What each service does">'+right+'</div></div>';
+}
+function mpick(side,i){
+  if(!match||match.end!==null||match.done[i]||match.bad)return;
+  if(side==='L')match.selL=match.selL===i?null:i;else match.selR=match.selR===i?null:i;
+  if(match.selL!==null&&match.selR!==null){
+    if(match.selL===match.selR){
+      match.done[match.selL]=true;match.selL=match.selR=null;
+      if(Object.keys(match.done).length===6){
+        match.end=(Date.now()-match.t0)+match.miss*3000;
+        if(!S.matchBest||match.end<S.matchBest){S.matchBest=match.end;match.best=true}
+        addXp(20);award('g1');checkBadges();burst();touchMeta();
+      }
+    }else{
+      match.miss++;match.bad={l:match.selL,r:match.selR};match.selL=match.selR=null;
+      setTimeout(function(){if(match){match.bad=null;if(view.page==='match')render()}},450);
+    }
+  }
+  render();
+}
+function tickMatch(){
+  if(view.page!=='match'||!match||match.end!==null)return;
+  var t=document.getElementById('timer');if(t)t.textContent=mmss((Date.now()-match.t0)+match.miss*3000);
+}
+
+/* ---------- LIBRARY ---------- */
+function libraryHtml(){
+  if(view.deckId){var d=S.decks.find(function(x){return x.id===view.deckId});if(d)return deckHtml(d);view.deckId=null}
+  var rows=S.decks.map(function(d){
+    var s=deckStats(d),pct=s.total?Math.round(s.learned/s.total*100):0;
+    return '<div class="deck"><div><h3>'+esc(d.name)+(d.key&&d.key!=='missed'?' <span class="chip">Starter</span>':'')+'</h3><div class="counts"><span>'+plural(s.total,'card')+'</span><span>'+s.due+' due</span><span>'+s.nw+' new</span><span>'+pct+'% learned</span></div><div class="bar thin" aria-hidden="true" style="max-width:15rem"><i style="width:'+pct+'%"></i></div></div>'+
+      '<div class="acts"><button class="btn sm" data-act="open-deck" data-id="'+d.id+'">Open</button><button class="btn sm primary" data-act="study-deck" data-id="'+d.id+'"'+((s.due+s.avail)?'':' disabled')+'>Study</button></div></div>';
+  }).join('');
+  var total=S.decks.reduce(function(a,d){return a+d.cards.length},0);
+  return pageHead('Library',total+' cards','yours','Starter decks follow the exam outline. Make your own decks for anything you keep missing.')+
+    '<section><h2>New deck</h2><form id="deck-form" class="row" style="margin-top:12px"><input type="text" id="nd-name" placeholder="Deck name, for example Networking weak spots" aria-label="Deck name" maxlength="80"><button class="btn primary" type="submit">Create deck</button></form></section>'+
+    '<section class="sec"><h2>Your decks</h2>'+(rows||'<p class="empty">No decks yet. Create one above.</p>')+'</section>';
+}
+function cardRow(c){
+  if(view.edit===c.id)return '<div class="crow"><form class="editbox" data-form="edit" data-id="'+c.id+'"><div class="two"><div><label class="l" for="ef">Front</label><textarea id="ef">'+esc(c.front)+'</textarea></div><div><label class="l" for="eb">Back</label><textarea id="eb">'+esc(c.back)+'</textarea></div></div><div class="row"><button class="btn primary sm" type="submit">Save card</button><button class="btn sm" type="button" data-act="cancel-edit">Cancel</button></div></form></div>';
+  var l=dueLabel(c),asking=view.confirm==='c:'+c.id;
+  return '<div class="crow"><div><div class="cf">'+esc(c.front)+'</div><div class="cb">'+esc(c.back)+'</div></div><div class="cmeta"><span class="chip '+l[1]+'">'+l[0]+'</span>'+(c.lapses>=3?'<span class="chip leech">Leech</span>':'')+
+    '<button class="btn sm" data-act="edit-card" data-id="'+c.id+'">Edit</button>'+
+    (asking?'<button class="btn sm danger" data-act="del-card" data-id="'+c.id+'">Confirm delete</button><button class="btn sm ghost" data-act="cancel-confirm">Keep</button>':'<button class="btn sm ghost" data-act="ask-del-card" data-id="'+c.id+'">Delete</button>')+'</div></div>';
+}
+function listHtml(d){
+  var q=view.q.trim().toLowerCase();
+  var cards=q?d.cards.filter(function(c){return (c.front+' '+c.back).toLowerCase().indexOf(q)>=0}):d.cards;
+  if(!cards.length)return '<p class="empty">'+(d.cards.length?'No cards match that search.':'This deck is empty. Add your first card above.')+'</p>';
+  var shown=cards.slice(0,view.limit);
+  return shown.map(cardRow).join('')+(cards.length>shown.length?'<p class="cap">Showing '+shown.length+' of '+cards.length+'. <button class="btn sm" data-act="more">Show more</button></p>':'');
+}
+function deckHtml(d){
+  var s=deckStats(d),asking=view.confirm==='d:'+d.id;
+  var txt=d.cards.map(function(c){return c.front.replace(/\s*\n\s*/g,' ')+'\t'+c.back.replace(/\s*\n\s*/g,' ')}).join('\n');
+  return '<p><button class="btn sm ghost" data-act="back-decks">← All decks</button></p>'+
+    '<div class="dhead"><input type="text" id="deck-name" value="'+esc(d.name)+'" aria-label="Deck name" maxlength="80"><button class="btn primary" data-act="study-deck" data-id="'+d.id+'"'+((s.due+s.avail)?'':' disabled')+'>Study this deck</button></div>'+
+    '<div class="counts" style="margin-bottom:22px"><span>'+plural(s.total,'card')+'</span><span>'+s.due+' due</span><span>'+s.nw+' new</span><span>'+s.mature+' mature</span></div>'+
+    '<section><h2>Add a card</h2><form id="card-form" class="cardform" style="margin-top:12px"><div class="two"><div><label class="l" for="cf-front">Front (question)</label><textarea id="cf-front" placeholder="What is the CIA triad?"></textarea></div><div><label class="l" for="cf-back">Back (answer)</label><textarea id="cf-back" placeholder="Confidentiality, integrity, availability."></textarea></div></div><div class="row"><button class="btn primary" type="submit">Add card</button><span class="hint" id="form-note">Ctrl or Cmd + Enter adds the card.</span></div></form></section>'+
+    '<details class="tool"><summary>Import or export cards</summary><div><label class="l" for="import-text">Paste cards, one per line: front, a tab or a | , then back</label><textarea id="import-text" class="minita" placeholder="Capital of Kenya | Nairobi"></textarea><div class="row"><button class="btn sm primary" data-act="import">Import cards</button></div><label class="l" for="export-text" style="margin-top:8px">Export (tab separated, pastes into a spreadsheet)</label><textarea id="export-text" class="minita" readonly>'+esc(txt)+'</textarea><div class="row"><button class="btn sm" data-act="copy-deck">Copy all</button><span class="hint" id="copy-note"></span></div></div></details>'+
+    '<section class="sec"><h2>Cards</h2><div style="margin:12px 0 4px"><input type="text" id="deck-search" placeholder="Search cards" aria-label="Search cards" value="'+esc(view.q)+'"></div><div id="card-list">'+listHtml(d)+'</div></section>'+
+    '<section class="sec">'+(asking?'<p>Delete this deck and its '+plural(s.total,'card')+'? This cannot be undone.</p><div class="row" style="margin-top:10px"><button class="btn danger" data-act="del-deck" data-id="'+d.id+'">Yes, delete deck</button><button class="btn" data-act="cancel-confirm">Keep it</button></div>':'<button class="btn danger sm" data-act="ask-del-deck" data-id="'+d.id+'">Delete deck</button>')+'</section>';
+}
+
+/* ---------- NOTES ---------- */
+var NCOL=['mint','rose','blue','amber'];
+function notesHtml(){
+  var list=S.notes.slice().sort(function(a,b){return (b.pin?1:0)-(a.pin?1:0)});
+  var cards=list.map(function(n,i){
+    var r=((i*37)%7-3)*0.7;
+    return '<div class="sticky'+(n.pin?' pin':'')+'" style="--nb:var(--n-'+n.color+');--r:'+r.toFixed(1)+'deg"><textarea data-note="'+n.id+'" aria-label="Note text" maxlength="600">'+esc(n.text)+'</textarea><div class="nacts"><button class="btn" data-act="note-pin" data-id="'+n.id+'" aria-pressed="'+!!n.pin+'">'+(n.pin?'Unpin':'Pin')+'</button><button class="btn" data-act="note-del" data-id="'+n.id+'">Tear off</button></div></div>';
+  }).join('');
+  var sw=NCOL.map(function(c,i){return '<label><input type="radio" name="ncol" value="'+c+'"'+(i===0?' checked':'')+' aria-label="'+c+' note"><span style="--nb:var(--n-'+c+')"></span></label>'}).join('');
+  return pageHead('Notes','Margin','notes','Scribble your own memory hooks. Notes save as you type and stay with your account.')+
+    '<form id="note-form" class="panel" style="display:grid;gap:12px;max-width:40rem"><label class="l" for="note-new">New note</label><textarea id="note-new" placeholder="A rhyme, a mnemonic, a doodle idea…" maxlength="600"></textarea><div class="row" style="justify-content:space-between"><div class="sw" role="radiogroup" aria-label="Note colour">'+sw+'</div><button class="btn primary" type="submit">Stick it up</button></div></form>'+
+    '<div class="notes">'+(cards||'<p class="empty">No notes yet. Add your first memory hook above.</p>')+'</div>';
+}
+
+/* ---------- PROGRESS ---------- */
+function progressHtml(){
+  var total=0,seen=0,mature=0,nw=0;
+  S.decks.forEach(function(d){d.cards.forEach(function(c){total++;if(!c.seen)nw++;else{seen++;if(c.ivl>=21)mature++}})});
+  var r=recent(14),labs=r.map(function(x){return String(new Date(x.t).getDate())});
+  var cols=r.map(function(x){return [{v:x.ok,cls:'b-ok'},{v:x.n-x.ok,cls:'b-miss'}]});
+  var lc=leeches(),rd=readiness(),ri=rankInfo();
+  var lh=lc.length?lc.slice(0,10).map(function(x){return '<div class="leech"><div><div class="cf">'+esc(x.c.front)+'</div><div class="cap" style="margin:0">'+esc(x.d.name)+' · missed '+x.c.lapses+' times</div></div><button class="btn sm" data-act="fix-leech" data-id="'+x.c.id+'" data-deck="'+x.d.id+'">Rewrite</button></div>'}).join(''):'<p class="empty">No leeches. A leech is a card you have missed 3 or more times.</p>';
+  var sel=function(id,vals,cur){return '<select id="'+id+'">'+vals.map(function(v){return '<option value="'+v+'"'+(cur===v?' selected':'')+'>'+v+'</option>'}).join('')+'</select>'};
+  var ag={c:[0,0],a:[0,0],g:[0,0]};S.exams.forEach(function(e){['c','a','g'].forEach(function(k){if(e.dom&&e.dom[k]){ag[k][0]+=e.dom[k][0];ag[k][1]+=e.dom[k][1]}})});
+  var dh=['c','a','g'].map(function(k){var v=ag[k],p=v[1]?Math.round(v[0]/v[1]*100):0;return '<div class="dbar"><span>'+esc(DOM[k])+'</span><div class="bar"><i style="width:'+p+'%"></i></div><span>'+(v[1]?p+'%':'-')+'</span></div>'}).join('');
+  var bd=BADGES.map(function(b){var on=S.badges.indexOf(b.id)>=0;return '<div class="bdg'+(on?' on':'')+'">'+D[b.i]()+'<b>'+esc(b.n)+'</b><span>'+esc(b.d)+'</span></div>'}).join('');
+  return pageHead('Progress','Your','journey','Streaks, scores, badges and the cards that need a rewrite.')+
+    '<div class="grid2"><section class="panel hand-box"><div class="row" style="gap:20px;flex-wrap:nowrap">'+ring(rd===null?0:rd/100,120,10,rd===null?'-':rd+'%','ready')+'<div><h3>Exam readiness</h3><p class="cap" style="margin-top:4px">'+(rd===null?'Finish a mock exam to unlock this. It blends your last three mock scores with recent flashcard recall.':'A guide built from your last three mocks and this week\'s recall. It is not a prediction.')+'</p></div></div></section>'+
+    '<section class="panel hand-box"><div class="eyebrow">Rank</div><h2 style="font-size:2rem;margin:4px 0">'+esc(ri.name)+'</h2><div class="xpbar" style="background:var(--line)"><i style="width:'+Math.round(ri.pct*100)+'%"></i></div><p class="cap">'+ri.xp+' XP'+(ri.next?' · '+(ri.next-ri.xp)+' XP to '+esc(ri.nextName):' · top rank reached')+'</p></section></div>'+
+    '<div class="facts sec"><div class="fact"><b>'+total+'</b><span>Cards</span></div><div class="fact"><b>'+nw+'</b><span>New</span></div><div class="fact"><b>'+(seen-mature)+'</b><span>Learning</span></div><div class="fact"><b>'+mature+'</b><span>Mature (21+ days)</span></div><div class="fact"><b>'+streak()+'</b><span>Day streak</span></div></div>'+
+    '<section class="sec"><h2>'+D.flame()+'Activity, last 16 weeks</h2><div class="panel">'+heatmap()+'<p class="cap">Darker squares are busier days. Today has a damson outline.</p></div></section>'+
+    '<div class="grid2 sec"><section><h2>'+D.spark()+'Last 14 days</h2><div class="panel">'+barChart(cols,labs,'Cards reviewed each day for the last 14 days, split into recalled and missed','No reviews yet. Finish a session to fill this in.')+'<div class="legend"><span><i style="background:var(--good)"></i>Recalled</span><span><i style="background:var(--again)"></i>Missed</span></div></div></section>'+
+    '<section><h2>'+D.bolt()+'Mock exam scores</h2><div class="panel">'+(S.exams.length>=2?lineChart(S.exams.slice(-12).map(function(e){return e.pct}),'Mock exam scores over time against the 70 percent pass line'):'<p class="empty">Finish two mock exams to see your trend.</p>')+(S.exams.length?'<div style="margin-top:12px">'+dh+'</div><p class="cap">Accuracy by skill area across all mocks.</p>':'')+'</div></section></div>'+
+    '<section class="sec"><h2>'+D.trophy()+'Badges</h2><div class="badges">'+bd+'</div></section>'+
+    '<section class="sec"><h2>'+D.key()+'Cards to rewrite</h2><div>'+lh+'</div></section>'+
+    '<section class="sec"><h2>'+D.cloud()+'Why spacing works</h2><div class="panel">'+curveSvg()+'<div class="legend"><span><i style="background:var(--again)"></i>No review</span><span><i style="background:var(--accent)"></i>Reviews on days 0, 1, 3, 8 and 19</span><span>Axis: days since first study</span></div><p class="cap">An illustration of the forgetting curve, not your own data. Each review makes memory fade more slowly, so the gaps can grow.</p></div></section>'+
+    '<section class="sec"><h2>'+D.gear()+'Study settings</h2><div class="panel setrow"><div><label class="l" for="npd">New cards per deck, per day</label>'+sel('npd',[5,10,15,20,30,50],S.settings.newPerDay)+'</div><div><label class="l" for="dgoal">Daily review goal</label>'+sel('dgoal',[10,20,30,50,80],S.settings.dailyGoal)+'</div><div><label class="l" for="edate">Exam date</label><input type="date" id="edate" value="'+esc(S.settings.examDate||'')+'"></div><label class="check"><input type="checkbox" id="tf-set"'+(S.settings.typeFirst?' checked':'')+'> Type my answer first</label></div></section>';
+}
+
+/* ---------- render ---------- */
+function pageBody(){
+  switch(view.page){
+    case 'study':return (view.studying&&sess)?studyHtml():studyPickHtml();
+    case 'exam':return examHtml();
+    case 'match':return matchHtml();
+    case 'library':return libraryHtml();
+    case 'notes':return notesHtml();
+    case 'progress':return progressHtml();
+    default:return homeHtml();
+  }
+}
+function render(){
+  var keepY=window.scrollY,ae=document.activeElement,keepId=ae&&ae.id&&ae.tagName==='TEXTAREA'?ae.id:null;
+  app.innerHTML=shell(pageBody());
+  if(sess&&sess.anim&&view.page==='study'){var fl=document.getElementById('flip');if(fl){void fl.offsetWidth;fl.classList.add('on')}sess.anim=false}
+  if(view.focus){var el=document.querySelector(view.focus);if(el)el.focus();view.focus=null}
+  else if(view.page==='study'&&view.studying&&sess&&!sess.finished&&!sess.shown&&sess.typeFirst){var a=document.getElementById('ans');if(a)a.focus()}
+  void keepY;void keepId;
+}
+
+/* ---------- events ---------- */
+function parseImport(text){
+  var added=[],skipped=0;
+  text.split(/\r?\n/).forEach(function(line){
+    if(!line.trim())return;
+    var i=line.indexOf('\t');if(i<0)i=line.indexOf('|');
+    if(i<0){skipped++;return}
+    var f=line.slice(0,i).trim(),b=line.slice(i+1).trim();
+    if(!f||!b){skipped++;return}
+    added.push(newCard(f,b));
+  });
+  return {added:added,skipped:skipped};
+}
+function curDeck(){return S.decks.find(function(d){return d.id===view.deckId})}
+function examNav(i){if(!exam||exam.done)return;exam.cur=Math.max(0,Math.min(exam.q.length-1,i));view.exConfirm=false;render()}
+function examPick(k){if(!exam||exam.done)return;var x=exam.q[exam.cur];if(k<0||k>=x.opts.length)return;x.pick=x.pick===k?null:k;render()}
+
+app.addEventListener('click',function(e){
+  var t=e.target.closest('[data-act]');if(!t)return;
+  var a=t.getAttribute('data-act'),id=t.getAttribute('data-id'),d;
+  switch(a){
+    case 'go':go(t.getAttribute('data-page'));break;
+    case 'menu-open':view.menu=true;render();var sd=document.querySelector('.nv');if(sd)sd.focus();break;
+    case 'menu-close':view.menu=false;render();break;
+    case 'start-all':startSession('all');break;
+    case 'study-deck':startSession(id);break;
+    case 'study-key':d=deckByKey(t.getAttribute('data-key'));if(d)startSession(d.id);break;
+    case 'flip':if(sess&&!sess.shown&&!sess.finished)reveal();break;
+    case 'show':reveal();break;
+    case 'grade':grade(+t.getAttribute('data-g'));break;
+    case 'undo':undo();break;
+    case 'end':view.studying=false;sess=null;render();break;
+    case 'finish':view.studying=false;sess=null;go('home');break;
+    case 'more-session':startSession(sess.scope);break;
+    case 'exam-start':
+      var cfg=view.exCfg;cfg.dom=(document.getElementById('ex-dom')||{value:cfg.dom}).value;
+      var tm=document.getElementById('ex-timed');cfg.timed=tm?tm.checked:cfg.timed;
+      cfg.n=+t.getAttribute('data-n');cfg.min=+t.getAttribute('data-min');
+      startExam(cfg);break;
+    case 'exam-domain':view.exCfg.dom=t.getAttribute('data-dom');startExam({n:10,min:10,dom:view.exCfg.dom,timed:view.exCfg.timed});break;
+    case 'pick':examPick(+t.getAttribute('data-i'));break;
+    case 'goto':examNav(+t.getAttribute('data-i'));break;
+    case 'next':examNav(exam.cur+1);break;
+    case 'prev':examNav(exam.cur-1);break;
+    case 'flag':if(exam&&!exam.done){var q0=exam.q[exam.cur];q0.flag=!q0.flag;render()}break;
+    case 'finish-ask':view.exConfirm=true;render();break;
+    case 'finish-no':view.exConfirm=false;render();break;
+    case 'finish-yes':finishExam(false);break;
+    case 'exfilter':view.exFilter=t.getAttribute('data-f');render();break;
+    case 'exam-again':exam=null;startExam(view.exCfg);break;
+    case 'exam-close':exam=null;render();break;
+    case 'exam-add':if(exam&&addMissed(+t.getAttribute('data-i')))toast('Added to <b>Missed questions</b>');else toast('Already in your flashcards.');render();break;
+    case 'exam-add-all':
+      var cnt=0;exam.q.forEach(function(x,i){var ok=x.pick!==null&&x.opts[x.pick].ok;if(!ok&&addMissed(i))cnt++});
+      toast(cnt?'Added '+plural(cnt,'card')+' to <b>Missed questions</b>':'They are already in your flashcards.');render();break;
+    case 'mpick':mpick(t.getAttribute('data-side'),+t.getAttribute('data-i'));break;
+    case 'mnew':newMatch();render();break;
+    case 'open-deck':view.deckId=id;view.q='';view.limit=150;view.edit=null;view.confirm=null;render();break;
+    case 'back-decks':view.deckId=null;view.edit=null;view.confirm=null;render();break;
+    case 'ask-del-deck':view.confirm='d:'+id;render();break;
+    case 'cancel-confirm':view.confirm=null;render();break;
+    case 'del-deck':
+      S.decks=S.decks.filter(function(x){return x.id!==id});delDecks[id]=1;delete dirtyDecks[id];
+      view.deckId=null;view.confirm=null;toast('Deck deleted.');touchMeta();render();break;
+    case 'edit-card':view.edit=id;view.confirm=null;view.focus='#ef';render();break;
+    case 'cancel-edit':view.edit=null;render();break;
+    case 'ask-del-card':view.confirm='c:'+id;render();break;
+    case 'del-card':d=curDeck();if(d){d.cards=d.cards.filter(function(c){return c.id!==id});touchDeck(d.id)}view.confirm=null;render();break;
+    case 'more':view.limit+=150;render();break;
+    case 'import':
+      d=curDeck();var ta=document.getElementById('import-text');if(!d||!ta)break;
+      var res=parseImport(ta.value);
+      if(!res.added.length){toast('No cards found. Put a tab or a | between front and back on each line.');break}
+      d.cards=d.cards.concat(res.added);touchDeck(d.id);
+      toast('Added '+plural(res.added.length,'card')+(res.skipped?'. Skipped '+plural(res.skipped,'line')+'.':'.'));render();break;
+    case 'copy-deck':
+      var ex=document.getElementById('export-text'),cn=document.getElementById('copy-note');if(!ex)break;
+      var fb=function(){ex.focus();ex.select();if(cn)cn.textContent='Selected. Press Ctrl or Cmd + C.'};
+      try{navigator.clipboard.writeText(ex.value).then(function(){if(cn)cn.textContent='Copied.'},fb)}catch(err){fb()}
+      break;
+    case 'fix-leech':view.page='library';view.deckId=t.getAttribute('data-deck');view.edit=id;view.q='';view.focus='#ef';render();break;
+    case 'note-pin':var n1=S.notes.find(function(x){return x.id===id});if(n1){n1.pin=!n1.pin;touchMeta();render()}break;
+    case 'note-del':S.notes=S.notes.filter(function(x){return x.id!==id});touchMeta();render();break;
+  }
+});
+app.addEventListener('submit',function(e){
+  e.preventDefault();
+  var f=e.target,d;
+  if(f.id==='deck-form'){
+    var inp=document.getElementById('nd-name'),name=inp.value.trim();
+    if(!name){inp.focus();return}
+    var nd={id:uid(),name:name,cards:[]};S.decks.push(nd);touchDeck(nd.id);touchMeta();
+    view.deckId=nd.id;view.q='';view.focus='#cf-front';render();
+  }else if(f.id==='card-form'){
+    d=curDeck();var fr=document.getElementById('cf-front'),bk=document.getElementById('cf-back'),n=document.getElementById('form-note');
+    if(!d)return;
+    if(!fr.value.trim()||!bk.value.trim()){if(n)n.textContent='Fill in both the front and the back.';(fr.value.trim()?bk:fr).focus();return}
+    d.cards.push(newCard(fr.value.trim(),bk.value.trim()));touchDeck(d.id);
+    view.focus='#cf-front';toast('Card added.');render();
+  }else if(f.getAttribute('data-form')==='edit'){
+    d=curDeck();var id=f.getAttribute('data-id'),c=d&&d.cards.find(function(x){return x.id===id});
+    var ef=document.getElementById('ef').value.trim(),eb=document.getElementById('eb').value.trim();
+    if(!c||!ef||!eb)return;
+    c.front=ef;c.back=eb;touchDeck(d.id);view.edit=null;render();
+  }else if(f.id==='note-form'){
+    var nt=document.getElementById('note-new'),txt=nt.value.trim();
+    if(!txt){nt.focus();return}
+    var cEl=f.querySelector('input[name=ncol]:checked');
+    S.notes.unshift({id:uid(),text:txt,color:cEl?cEl.value:'mint',pin:false});
+    award('nt');touchMeta();render();
+  }
+});
+app.addEventListener('change',function(e){
+  var t=e.target;
+  if(t.id==='deck-name'){var d=curDeck(),v=t.value.trim();if(d&&v&&v!==d.name){d.name=v;touchDeck(d.id)}else if(d)t.value=d.name}
+  else if(t.id==='npd'){S.settings.newPerDay=+t.value;touchMeta()}
+  else if(t.id==='dgoal'){S.settings.dailyGoal=+t.value;touchMeta()}
+  else if(t.id==='edate'){S.settings.examDate=t.value;touchMeta()}
+  else if(t.id==='tf-set'){S.settings.typeFirst=t.checked;touchMeta()}
+  else if(t.id==='tf'&&sess){sess.typeFirst=t.checked;S.settings.typeFirst=t.checked;touchMeta();render()}
+  else if(t.id==='ex-dom'){view.exCfg.dom=t.value}
+  else if(t.id==='ex-timed'){view.exCfg.timed=t.checked}
+  else if(t.hasAttribute&&t.hasAttribute('data-note')){var n=S.notes.find(function(x){return x.id===t.getAttribute('data-note')});if(n){n.text=t.value;touchMeta()}}
+});
+app.addEventListener('input',function(e){
+  if(e.target.id==='deck-search'){
+    view.q=e.target.value;view.limit=150;
+    var d=curDeck(),box=document.getElementById('card-list');if(d&&box)box.innerHTML=listHtml(d);
+  }
+});
+app.addEventListener('keydown',function(e){
+  if(e.target.id==='cf-back'&&(e.ctrlKey||e.metaKey)&&e.key==='Enter'){e.preventDefault();var f=document.getElementById('card-form');if(f.requestSubmit)f.requestSubmit();else f.dispatchEvent(new Event('submit',{cancelable:true,bubbles:true}))}
+});
+document.addEventListener('keydown',function(e){
+  var t=e.target,tag=t&&t.tagName;
+  if(e.key==='Escape'&&view.menu){view.menu=false;render();return}
+  if(e.metaKey||e.ctrlKey||e.altKey)return;
+  var typing=(tag==='INPUT'&&t.type!=='checkbox'&&t.type!=='radio')||tag==='TEXTAREA'||tag==='SELECT';
+  if(view.page==='study'&&view.studying&&sess&&!sess.finished){
+    if(t&&t.id==='ans'&&e.key==='Enter'){e.preventDefault();reveal();return}
+    if(typing)return;
+    if(tag==='BUTTON'&&(e.key===' '||e.key==='Enter'))return;
+    if(!sess.shown&&(e.key===' '||e.key==='Enter')){e.preventDefault();reveal();return}
+    if(sess.shown&&(e.key==='1'||e.key==='2'||e.key==='3'||e.key==='4')){grade(+e.key-1);return}
+    if(e.key==='z'||e.key==='Z')undo();
+  }else if(view.page==='exam'&&exam&&!exam.done){
+    if(typing)return;
+    var k='1234'.indexOf(e.key);if(k<0)k='abcd'.indexOf(e.key.toLowerCase());
+    if(k>=0){examPick(k);return}
+    if(e.key==='ArrowRight'){examNav(exam.cur+1);return}
+    if(e.key==='ArrowLeft'){examNav(exam.cur-1);return}
+    if(e.key==='f'||e.key==='F'){exam.q[exam.cur].flag=!exam.q[exam.cur].flag;render()}
+  }else if(view.page==='home'&&(e.key==='s'||e.key==='S')&&!typing){
+    if(todayCount('all')>0)startSession('all');
+  }
+});
+function hashPage(){
+  var h=(location.hash||'').replace('#','');
+  if(PAGES.some(function(p){return p[0]===h})&&h!==view.page){view.page=h;return true}
+  return false;
+}
+window.addEventListener('hashchange',function(){if(hashPage())render()});
+setInterval(function(){tickExam();tickMatch()},500);
+
+hashPage();
+render();
+checkBadges();
+initStore();
+})();
+</script>
