@@ -1,3 +1,10 @@
+
+<meta name="theme-color" content="#04222C">
+<meta name="description" content="AZ Cloud Recall — a focused, gamified AZ-900 study companion with flashcards, practice exams, service matching, notes and progress tracking.">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<link rel="manifest" href="/manifest.webmanifest">
+<link rel="icon" href="/icons/icon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="/icons/icon.svg">
 <title>AZ Cloud Recall</title>
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Syne:wght@500;700;800&family=Pinyon+Script&family=Caveat:wght@500;700&family=Figtree:wght@400;500;600&family=DM+Mono:wght@400;500&display=swap">
@@ -1485,4 +1492,15 @@ render();
 checkBadges();
 initStore();
 })();
+</script>
+<style>
+.azcr-install-link{position:fixed;z-index:9999;right:16px;bottom:max(16px,env(safe-area-inset-bottom));display:inline-flex;align-items:center;gap:8px;padding:11px 15px;border-radius:999px;background:#8E2457;color:#fff!important;text-decoration:none!important;font:700 13px/1.2 system-ui,sans-serif;box-shadow:0 8px 28px rgba(0,0,0,.22);border:1px solid rgba(255,255,255,.24)}
+.azcr-install-link:hover{transform:translateY(-1px)}
+@media(max-width:520px){.azcr-install-link{right:10px;bottom:max(10px,env(safe-area-inset-bottom));font-size:12px;padding:10px 12px}}
+</style>
+<a class="azcr-install-link" href="https://github.com/yourtechbaddie-ke/AZ-Cloud-Recall/releases/latest" target="_blank" rel="noopener noreferrer" aria-label="Download the AZ Cloud Recall Android APK">↓ Get Android APK</a>
+<script>
+if ('serviceWorker' in navigator && location.protocol.indexOf('http')===0) {
+  window.addEventListener('load', function(){ navigator.serviceWorker.register('/sw.js').catch(function(){}); });
+}
 </script>
