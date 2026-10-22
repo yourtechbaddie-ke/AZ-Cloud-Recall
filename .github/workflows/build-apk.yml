@@ -1,0 +1,51 @@
+name: Build Android APK
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'index.html'
+      - 'app/**'
+      - 'build.gradle'
+      - 'settings.gradle'
+      - 'gradle.properties'
+      - '.github/workflows/build-apk.yml'
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out source
+        uses: actions/checkout@v4
+      - name: Set up Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+      - name: Set up Gradle
+        uses: gradle/actions/setup-gradle@v4
+        with:
+          gradle-version: '8.9'
+      - name: Set up Android SDK
+        uses: android-actions/setup-android@v3
+      - name: Build debug APK
+        run: gradle --no-daemon assembleDebug
+      - name: Prepare APK
+        run: cp app/build/outputs/apk/debug/app-debug.apk AZ-Cloud-Recall.apk
+      - name: Upload APK artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: AZ-Cloud-Recall-APK
+          path: AZ-Cloud-Recall.apk
+          retention-days: 30
+      - name: Publish APK release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: android-v1.0.${{ github.run_number }}
+          name: AZ Cloud Recall Android v1.0.${{ github.run_number }}
+          make_latest: true
+          files: AZ-Cloud-Recall.apk
+          body: |
+            Installable Android build of AZ Cloud Recall.
+            This is a debug-signed APK for testing and personal use. Android may ask you to allow installation from your browser or file manager.
